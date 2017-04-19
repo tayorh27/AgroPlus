@@ -116,7 +116,7 @@ public class CategoryActivity extends AppCompatActivity implements ProductsListe
     @Override
     public void onProductCallback(ArrayList<Products> products) {
         current.clear();
-        if (swipe != null && swipe.isRefreshing()) {
+        if (swipe.isRefreshing()) {
             swipe.setRefreshing(false);
             if (!products.isEmpty()) {
                 current = products;

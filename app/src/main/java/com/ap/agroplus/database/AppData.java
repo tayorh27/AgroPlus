@@ -66,6 +66,16 @@ public class AppData {
         return pref.getStringSet("search_results", new HashSet<String>());
     }
 
+    public void setHomeResults(Set<String> results) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putStringSet("home_results", results);
+        editor.apply();
+    }
+
+    public Set<String> getHomeResults() {
+        return pref.getStringSet("home_results", new HashSet<String>());
+    }
+
     public void LogOut() {
         SharedPreferences.Editor editor = pref.edit();
         editor.clear();

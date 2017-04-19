@@ -76,12 +76,15 @@ import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -177,6 +180,9 @@ public class Home2Activity extends AppCompatActivity
         adapter = new HomeAdapter(Home2Activity.this, this);
         recylerView.setLayoutManager(new LinearLayoutManager(Home2Activity.this));
         recylerView.setAdapter(adapter);
+
+        CheckDatabaseForExistingUser();
+
         SyncingProducts();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -304,6 +310,66 @@ public class Home2Activity extends AppCompatActivity
         }
     };
 
+    private void CheckDatabaseForExistingUser() {
+        Set<String> getData = data.getHomeResults();
+        Log.e("search", getData.toString());
+        ArrayList<Products> customData = new ArrayList<>();
+        Iterator<String> array = getData.iterator();
+        if (!getData.isEmpty()) {
+            for (int i = 0; i < getData.size(); i++) {
+                try {
+                    if (array.hasNext()) {
+                        JSONObject object = new JSONObject(array.next());
+                        int id = object.getInt("id");
+                        String username = object.getString("username");
+                        String location = object.getString("location");
+                        String image_dp = object.getString("image_path");
+                        String product_image = object.getString("uploaded_image");
+                        String email = object.getString("email");
+                        String mobile = object.getString("mobile");
+                        String time = object.getString("time");
+                        String category = object.getString("category");
+                        String caption = object.getString("caption");
+                        String price = object.getString("price");
+                        String product_link = object.getString("product_link");
+                        Products products = new Products(id, username, location, image_dp, product_image, email, mobile, time, caption, price, category, product_link);
+                        customData.add(products);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            current = customData;
+            adapter.LoadRecyclerView(customData);
+        }
+    }
+
+    private void SaveResultLoad(ArrayList<Products> _products) {
+        Set<String> currentSet = data.getHomeResults();
+        currentSet.clear();
+        for (int i = 0; i < _products.size(); i++) {
+            Products products = _products.get(i);
+            JSONObject jsonObject = new JSONObject();
+            try {
+                jsonObject.put("username", products.username);
+                jsonObject.put("location", products.location);
+                jsonObject.put("image_path", products.image_dp);
+                jsonObject.put("uploaded_image", products.product_image);
+                jsonObject.put("email", products.email);
+                jsonObject.put("mobile", products.mobile);
+                jsonObject.put("time", products.time);
+                jsonObject.put("category", products.category);
+                jsonObject.put("caption", products.caption);
+                jsonObject.put("price", products.price);
+                jsonObject.put("product_link", products.product_link);
+                currentSet.add(jsonObject.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        data.setHomeResults(currentSet);
+    }
 
     public void Refresh(View view) {
         SyncingProducts();
@@ -584,9 +650,10 @@ public class Home2Activity extends AppCompatActivity
     @Override
     public void onProductCallback(ArrayList<Products> products) {
         current.clear();
-        if (swipe != null && swipe.isRefreshing()) {
+        if (swipe.isRefreshing()) {
             swipe.setRefreshing(false);
             if (!products.isEmpty()) {
+                SaveResultLoad(products);
                 current = products;
                 adapter.LoadRecyclerView(products);
                 loading.smoothToHide();
@@ -610,6 +677,7 @@ public class Home2Activity extends AppCompatActivity
                 }
                 Toast.makeText(this, "Failed to get products", Toast.LENGTH_SHORT).show();
             } else {
+                SaveResultLoad(products);
                 current = products;
                 if (loading != null && iv != null && tv != null) {
                     loading.smoothToHide();
