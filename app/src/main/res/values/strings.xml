@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">AgroPlus</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string-array name="media_options">
+        <item>Take a picture</item>
+        <item>Choose from gallery</item>
+    </string-array>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_home2">AgroPlus</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string-array name="categories">
+        <item>Select a Category</item>
+        <item>Crops</item>
+        <item>Feeds</item>
+        <item>Fertilizer</item>
+        <item>Grains</item>
+        <item>Livestock</item>
+        <item>Machinery</item>
+    </string-array>
+    <string name="title_activity_view_image">ViewImageActivity</string>
+
+    <string name="already"><u>I already have an account</u></string>
+    <string name="forgot"><u>Forgot Password</u></string>
+    <string name="access"><u>Already have access code</u></string>
+    <string name="login">Login</string>
+    <string name="acct">Profile</string>
+    <string name="forgotActivity">Request Access Code</string>
+    <string name="accessActivity">Change Password</string>
+    <string name="register">Register</string>
+    <string name="profile">User Profile</string>
+    <string name="contact">Contact Us</string>
+    <string name="change_password">Change Password</string>
+    <string name="title_activity_view_from_outside">Product</string>
+    <string name="search">Search</string>
+</resources>

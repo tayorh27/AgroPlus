@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.ap.agroplus.Activity.Home2Activity"
+    tools:showIn="@layout/app_bar_home2">
+
+    <RelativeLayout
+        android:id="@+id/part1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/uploading"
+            style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            tools:indeterminateBehavior="repeat" />
+
+        <ImageView
+            android:id="@+id/retry"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@+id/uploading"
+            android:layout_marginRight="15dp"
+            android:layout_toLeftOf="@+id/close"
+            android:src="@drawable/ic_refresh_white_36px"
+            android:tag="upload"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/uploading"
+            android:src="@drawable/ic_close_black_18px" />
+
+        <com.beardedhen.androidbootstrap.AwesomeTextView
+            android:id="@+id/tv_upload_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/uploading"
+            android:textSize="15sp"
+            app:bootstrapBrand="info"
+            app:bootstrapText="Uploading your product" />
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/part1">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <com.wang.avi.AVLoadingIndicatorView
+            android:id="@+id/loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:indicatorColor="@color/colorAccent"
+            app:indicatorName="BallTrianglePathIndicator" />
+
+        <ImageView
+            android:id="@+id/click_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="Refresh"
+            android:src="@drawable/ic_refresh_white_36px" />
+
+        <com.beardedhen.androidbootstrap.AwesomeTextView
+            android:id="@+id/tv_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:text="Ooops something went wrong!!!"
+            android:textSize="15sp"
+            app:bootstrapBrand="regular"
+            app:bootstrapText="Loading available products" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/slideView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="2dp"
+            app:cardElevation="5dp">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:onClick="Close"
+                        android:src="@drawable/ic_close_black_18px" />
+
+                    <ImageView
+                        android:id="@+id/product_image"
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <EditText
+                        android:id="@+id/edit_caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="28dp"
+                        android:layout_toRightOf="@+id/product_image"
+                        android:background="@null"
+                        android:hint="Caption this"
+                        android:singleLine="true" />
+
+                    <View
+                        android:id="@+id/view1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/product_image"
+                        android:background="@color/bootstrap_gray_light" />
+
+                    <ImageView
+                        android:id="@+id/location_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/view1"
+                        android:layout_marginTop="10dp"
+                        android:padding="15dp"
+                        android:src="@drawable/ic_location_on_black_24px" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/edit_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/view1"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="26dp"
+                        android:layout_toRightOf="@+id/location_icon"
+                        android:background="@null"
+                        android:hint="Add Location"
+                        android:singleLine="true" />
+
+                    <View
+                        android:id="@+id/view2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/location_icon"
+                        android:layout_margin="10dp"
+                        android:background="@color/bootstrap_gray_light" />
+
+                    <ImageView
+                        android:id="@+id/price_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/view2"
+                        android:layout_marginTop="10dp"
+                        android:padding="15dp"
+                        android:src="@drawable/ic_attach_money_black_24px" />
+
+                    <EditText
+                        android:id="@+id/edit_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/view2"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_toRightOf="@+id/price_icon"
+                        android:background="@null"
+                        android:hint="Add Price"
+                        android:inputType="number"
+                        android:singleLine="true" />
+
+                    <View
+                        android:id="@+id/view"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/price_icon"
+                        android:layout_margin="10dp"
+                        android:background="@color/bootstrap_gray_light" />
+
+                    <ImageView
+                        android:id="@+id/category_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/view"
+                        android:layout_marginTop="10dp"
+                        android:padding="15dp"
+                        android:src="@drawable/ic_list_black_24px" />
+
+                    <Spinner
+                        android:id="@+id/edit_category"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/view"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="26dp"
+                        android:layout_toRightOf="@+id/category_icon"
+                        android:background="@null"
+                        android:entries="@array/categories"
+                        android:hint="Add Price"
+                        android:spinnerMode="dialog" />
+
+                    <View
+                        android:id="@+id/view3"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/category_icon"
+                        android:background="@color/bootstrap_gray_light" />
+
+                    <com.beardedhen.androidbootstrap.BootstrapButton
+                        android:id="@+id/btn_submit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/view3"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/btn_text_bg"
+                        android:drawableLeft="@drawable/ic_done_black_24px"
+                        android:onClick="uploadImages"
+                        android:textColor="@color/bootstrap_gray_light"
+                        app:bootstrapBrand="success"
+                        app:bootstrapSize="xl"
+                        app:bootstrapText="Submit"
+                        app:roundedCorners="true" />
+
+                </RelativeLayout>
+
+            </ScrollView>
+
+
+        </android.support.v7.widget.CardView>
+
+    </RelativeLayout>
+
+</RelativeLayout>
