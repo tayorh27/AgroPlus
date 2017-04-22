@@ -86,6 +86,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
+import id.zelory.compressor.Compressor;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Home2Activity extends AppCompatActivity
@@ -314,34 +315,32 @@ public class Home2Activity extends AppCompatActivity
         Set<String> getData = data.getHomeResults();
         Log.e("search", getData.toString());
         ArrayList<Products> customData = new ArrayList<>();
-        Iterator<String> array = getData.iterator();
-        if (!getData.isEmpty()) {
-            for (int i = 0; i < getData.size(); i++) {
-                try {
-                    if (array.hasNext()) {
-                        JSONObject object = new JSONObject(array.next());
-                        int id = object.getInt("id");
-                        String username = object.getString("username");
-                        String location = object.getString("location");
-                        String image_dp = object.getString("image_path");
-                        String product_image = object.getString("uploaded_image");
-                        String email = object.getString("email");
-                        String mobile = object.getString("mobile");
-                        String time = object.getString("time");
-                        String category = object.getString("category");
-                        String caption = object.getString("caption");
-                        String price = object.getString("price");
-                        String product_link = object.getString("product_link");
-                        Products products = new Products(id, username, location, image_dp, product_image, email, mobile, time, caption, price, category, product_link);
-                        customData.add(products);
-                    }
+        try {
+            JSONArray _jsonArray = new JSONArray(getData.toString());
+            if (_jsonArray.length() > 0) {
+                for (int i = 0; i < _jsonArray.length(); i++) {
+                    JSONObject object = _jsonArray.getJSONObject(i);
+                    int id = object.getInt("id");
+                    String username = object.getString("username");
+                    String location = object.getString("location");
+                    String image_dp = object.getString("image_path");
+                    String product_image = object.getString("uploaded_image");
+                    String email = object.getString("email");
+                    String mobile = object.getString("mobile");
+                    String time = object.getString("time");
+                    String category = object.getString("category");
+                    String caption = object.getString("caption");
+                    String price = object.getString("price");
+                    String product_link = object.getString("product_link");
+                    Products products = new Products(id, username, location, image_dp, product_image, email, mobile, time, caption, price, category, product_link);
+                    customData.add(products);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+                current = customData;
+                adapter.LoadRecyclerView(customData);
             }
-            current = customData;
-            adapter.LoadRecyclerView(customData);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -460,16 +459,46 @@ public class Home2Activity extends AppCompatActivity
         String cat_ = spins[spinner.getSelectedItemPosition()];
         fileUpload = new FileUpload(count, Home2Activity.this, relativeLayout, progressBar, tv1, iv1, retry, edit_caption, edit_price, spinner, mAutocompleteTextView, jsonArray, cat_);
         if (count == 1) {
-            fileUpload.SetPaths(pictures.get(0), "", "");
-            fileUpload.Upload_one(pictures.get(0));
+            File comFile = new File(pictures.get(0));
+            File al = Compressor.getDefault(Home2Activity.this).compressToFile(comFile);
+            fileUpload.SetPaths(al.getPath(), "", "");
+            fileUpload.Upload_one(al.getPath());
         } else if (count == 2) {
-            fileUpload.SetPaths(pictures.get(0), pictures.get(1), "");
-            fileUpload.Upload_two(pictures.get(0), pictures.get(1));
+            File comFile = new File(pictures.get(0));
+            File comFile1 = new File(pictures.get(1));
+            File al = Compressor.getDefault(Home2Activity.this).compressToFile(comFile);
+            File al1 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile1);
+            fileUpload.SetPaths(al.getPath(), al1.getPath(), "");
+            fileUpload.Upload_two(al.getPath(), al1.getPath());
         } else if (count == 3) {
-            fileUpload.SetPaths(pictures.get(0), pictures.get(1), pictures.get(2));
-            fileUpload.Upload_three(pictures.get(0), pictures.get(1), pictures.get(2));
+            File comFile = new File(pictures.get(0));
+            File comFile1 = new File(pictures.get(1));
+            File comFile2 = new File(pictures.get(2));
+            File al = Compressor.getDefault(Home2Activity.this).compressToFile(comFile);
+            File al1 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile1);
+            File al2 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile2);
+            fileUpload.SetPaths(al.getPath(), al1.getPath(), al2.getPath());
+            fileUpload.Upload_three(al.getPath(), al1.getPath(), al2.getPath());
         }
 
+    }
+
+    private void CompressImage(String file_path, String file_path1, String file_path2) {
+        if (!file_path.isEmpty()) {
+            File comFile = new File(file_path);
+            File al = Compressor.getDefault(Home2Activity.this).compressToFile(comFile);
+            Log.e("Compress1", "File compressed to " + al.length());
+        }
+        if (!file_path1.isEmpty()) {
+            File comFile1 = new File(file_path1);
+            File al1 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile1);
+            Log.e("Compress1", "File compressed to " + al1.length());
+        }
+        if (!file_path2.isEmpty()) {
+            File comFile2 = new File(file_path2);
+            File al2 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile2);
+            Log.e("Compress1", "File compressed to " + al2.length());
+        }
     }
 
     public String getPath(Uri uri) {

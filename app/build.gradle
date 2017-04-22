@@ -11,6 +11,10 @@ android {
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders = [onesignal_app_id: "72819f19-0dc6-4bb8-9c22-4723a5272d57",
+                                // Project number pulled from dashboard, local value is ignored.
+                                onesignal_google_project_number: "763760722082"]
     }
 
 
@@ -37,6 +41,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     ///Users/sanniadewale/Library/Android/sdk
+    compile 'com.onesignal:OneSignal:3.+@aar'
+    compile 'com.google.android.gms:play-services-gcm:10.2.0'
+    compile "com.google.android.gms:play-services-location:10.2.0"
     compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
     compile 'com.github.myinnos:ImageSliderWithSwipes:1.0.1'
     compile 'com.android.support:multidex:1.0.1'

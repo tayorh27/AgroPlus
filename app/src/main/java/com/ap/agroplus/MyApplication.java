@@ -6,6 +6,7 @@ import android.support.multidex.MultiDex;
 
 import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.devs.acr.AutoErrorReporter;
+import com.onesignal.OneSignal;
 
 import net.gotev.uploadservice.UploadService;
 
@@ -38,6 +39,9 @@ public class MyApplication extends Application {
                 .setFontAttrId(R.attr.fontPath)
                 .build()
         );
+        OneSignal.startInit(this)
+                .disableGmsMissingPrompt(true)
+                .init();
 //        AutoErrorReporter.get(this)
 //                .setEmailAddresses(AppConfig.EMAIL_ADDRESS)
 //                .setEmailSubject("Auto Crash Report")

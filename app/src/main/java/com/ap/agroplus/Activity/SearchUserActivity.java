@@ -24,6 +24,7 @@ import com.ap.agroplus.information.Search;
 import com.ap.agroplus.network.GetUsers;
 import com.wang.avi.AVLoadingIndicatorView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -98,26 +99,23 @@ public class SearchUserActivity extends AppCompatActivity implements ClickCallba
         Set<String> getData = data.getSearchResults();
         Log.e("search", getData.toString());
         ArrayList<Search> customData = new ArrayList<>();
-        Iterator<String> array = getData.iterator();
-        if (!getData.isEmpty()) {
-            for (int i = 0; i < getData.size(); i++) {
-                try {
-                    if (array.hasNext()) {
-                        JSONObject jsonObject = new JSONObject(array.next());
-                        String username = jsonObject.getString("username");
-                        String email = jsonObject.getString("email");
-                        String mob = jsonObject.getString("mobile");
-                        String dp = jsonObject.getString("dp");
-                        Search search = new Search(username, email, mob, dp);
-                        customData.add(search);
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        try {
+            JSONArray jsonArray = new JSONArray(getData.toString());
+            if (jsonArray.length() > 0) {
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String username = jsonObject.getString("username");
+                    String email = jsonObject.getString("email");
+                    String mob = jsonObject.getString("mobile");
+                    String dp = jsonObject.getString("dp");
+                    Search search = new Search(username, email, mob, dp);
+                    customData.add(search);
                 }
+                searchArray = customData;
+                adapter.LoadView(customData);
             }
-            searchArray = customData;
-            adapter.LoadView(customData);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -143,7 +141,7 @@ public class SearchUserActivity extends AppCompatActivity implements ClickCallba
             jsonObject.put("mobile", search.mobile);
             jsonObject.put("dp", search.image_path);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e("SaveResultClick", e.toString());
         }
         Set<String> currentSet = data.getSearchResults();
         currentSet.add(jsonObject.toString());

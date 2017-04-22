@@ -21,9 +21,12 @@ import com.ap.agroplus.Activity.Home2Activity;
 import com.ap.agroplus.AppConfig;
 import com.ap.agroplus.General;
 import com.ap.agroplus.VolleySingleton;
+import com.ap.agroplus.database.AppData;
+import com.ap.agroplus.information.User;
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.mancj.slideup.SlideUp;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,6 +52,8 @@ public class RegisterProduct {
     Spinner spinner;
     ImageView retry;
     AwesomeTextView tv;
+    AppData data;
+    User user;
 
     public RegisterProduct(Context context, int username, String location, String uploaded_image, String caption, String price, String time, String category, String product_link,
                            RelativeLayout relativeLayout, EditText edit_caption, EditText edit_price, Spinner spinner, AutoCompleteTextView autoCompleteTextView,
@@ -56,6 +61,7 @@ public class RegisterProduct {
         this.context = context;
         //this.slideUp = slideUp;
         general = new General(context);
+        data = new AppData(context);
         volleySingleton = VolleySingleton.getInstance();
         requestQueue = volleySingleton.getRequestQueue();
         this.username = username;
@@ -99,6 +105,10 @@ public class RegisterProduct {
                         Home2Activity home2Activity = new Home2Activity();
                         //home2Activity.First_Initial();
                         //home2Activity.SyncingProducts2();
+                        user = data.getUser();
+                        String message = username + " just uploaded a " + category + " product for " + price + ".";
+                        JSONArray jsonArray = new JSONArray(product_link);
+                        General.SendNotification(user, "AgroPlus", message, jsonArray);
                     } else if (success == 0) {
                         tv.setText("Upload failed. Try again");
                         retry.setVisibility(View.VISIBLE);
@@ -142,4 +152,6 @@ public class RegisterProduct {
         };
         requestQueue.add(stringRequest);
     }
+
+
 }
