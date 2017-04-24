@@ -82,7 +82,7 @@ public class UpdateUser {
     }
 
     public void UpdateUserEmail(final TextView tvEmail) {
-        String url = AppConfig.WEB_URL + "UpdateEmail.php?email=" + email;
+        String url = AppConfig.WEB_URL + "UpdateEmail.php?email=" + email + "&id=" + user.id;
         //String _url = url.replace(" ", "%20");
         general.displayDialog("Updating user email address");
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -121,9 +121,9 @@ public class UpdateUser {
     }
 
     public void UpdateUserPhone(final String number, final TextView tvPhone) {
-        String url = AppConfig.WEB_URL + "UpdatePhone.php?number=" + number;
+        String url = AppConfig.WEB_URL + "UpdatePhone.php?number=" + number + "&id=" + user.id;
         //String _url = url.replace(" ", "%20");
-        general.displayDialog("Updating user email address");
+        general.displayDialog("Updating user phone number");
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

@@ -87,7 +87,7 @@ public class ViewImageActivity extends AppCompatActivity implements BaseSliderVi
             time.setText(TimeUpdate.setAgo(milli));
             String getDp = intent.getString("dp");
             String use_link = getDp.replace(" ", "%20");
-            Glide.with(ViewImageActivity.this).load(use_link).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).into(imageDp);
+            Glide.with(ViewImageActivity.this).load(use_link).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(imageDp);
 
 
             try {

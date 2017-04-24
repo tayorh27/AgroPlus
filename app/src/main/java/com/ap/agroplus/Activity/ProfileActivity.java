@@ -230,7 +230,7 @@ public class ProfileActivity extends AppCompatActivity {
     public void UpdatePhone(View view) {
         new MaterialDialog.Builder(ProfileActivity.this)
                 .title("Update your phone number")
-                .inputType(InputType.TYPE_NUMBER_VARIATION_NORMAL)
+                .inputType(InputType.TYPE_CLASS_PHONE)
                 .inputRange(2, 15, getResources().getColor(R.color.bootstrap_brand_danger))
                 .input("Enter phone number here", "", false, new MaterialDialog.InputCallback() {
                     @Override

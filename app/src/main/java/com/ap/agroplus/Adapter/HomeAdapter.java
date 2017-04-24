@@ -73,7 +73,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeHolder> {
             e.printStackTrace();
         }
         String product_image_url = initial_url.replace(" ", "%20");
-        Glide.with(context).load(image_dp_url).override(48, 48).centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).fitCenter().into(holder.imageDp);
+        Glide.with(context).load(image_dp_url).override(48, 48).centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).fitCenter().into(holder.imageDp);
         Glide.with(context).load(product_image_url).diskCacheStrategy(DiskCacheStrategy.ALL).fitCenter().crossFade().into(holder.productDp);
         //ImageLoaderManager.displayImage(context, image_dp_url, holder.imageDp);
         //ImageLoaderManager.displayImage(context, product_image_url, holder.productDp);

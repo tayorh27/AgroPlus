@@ -12,7 +12,8 @@
     <ss.com.bannerslider.views.BannerSlider
         android:id="@+id/sample"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         app:animateIndicators="true"
         app:defaultIndicators="circle"
         app:indicatorSize="5dp"

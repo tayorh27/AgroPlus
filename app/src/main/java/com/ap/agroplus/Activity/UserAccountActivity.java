@@ -85,7 +85,7 @@ public class UserAccountActivity extends AppCompatActivity implements ProductsLi
 
         getSupportActionBar().setTitle(g_username);
 
-        Glide.with(UserAccountActivity.this).load(g_dp.replace(" ", "%20")).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).into(profile_image);
+        Glide.with(UserAccountActivity.this).load(g_dp.replace(" ", "%20")).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(profile_image);
         user.setText(g_username);
         tvCall.setOnClickListener(new View.OnClickListener() {
             @Override

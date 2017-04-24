@@ -20,10 +20,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Random;
+import java.util.Scanner;
 
 import id.zelory.compressor.Compressor;
 
@@ -41,39 +44,76 @@ public class General {
     }
 
     public static void SendNotification(User user, String title, String message, JSONArray jsonArray1) {
-        JSONObject object = new JSONObject();
+        final JSONObject object = new JSONObject();
 
         JSONArray jsonArray;
         jsonArray = new JSONArray();
         try {
-            jsonArray.put(0, "Active Users");
-            jsonArray.put(1, "Inactive Users");
-            jsonArray.put(2, "Engaged Users");
+            jsonArray.put(0, "All");
+            //jsonArray.put(1, "Inactive Users");
+            //jsonArray.put(2, "Engaged Users");
 
             JSONObject object_content = new JSONObject();
             object_content.put("en", "English Message");
             JSONObject object_data = new JSONObject();
             object_data.put(title, message);
+            object.put("app_id", AppConfig.APP_ID);
             object.put("included_segments", jsonArray.toString());
             object.put("contents", object_content.toString());
             object.put("data", object_data.toString());
             object.put("small_icon", user.image_path);
             object.put("large_icon", user.image_path);
-            object.put("big_picture", jsonArray.getString(0));
+            object.put("big_picture", jsonArray1.getString(0));
         } catch (JSONException e) {
             Log.e("push noti", e.toString());
         }
-        OneSignal.postNotification(object, new OneSignal.PostNotificationResponseHandler() {
+        new Thread(new Runnable() {
             @Override
-            public void onSuccess(JSONObject response) {
-                Log.e("push success", "done");
-            }
+            public void run() {
+                try {
+                    String jsonResponse;
 
-            @Override
-            public void onFailure(JSONObject response) {
-                Log.e("push fail", "failed");
+                    URL url = new URL("https://onesignal.com/api/v1/notifications");
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                    con.setUseCaches(false);
+                    con.setDoOutput(true);
+                    con.setDoInput(true);
+
+                    con.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                    con.setRequestProperty("Authorization", "Basic OTJlZTVkODEtN2QzMy00MjE1LWI4NzItZDczYTJhNjE1YTgy");
+                    con.setRequestMethod("POST");
+
+                    String strJsonBody = object.toString();
+
+
+                    Log.e("Notification", "strJsonBody:\n" + strJsonBody);
+
+                    byte[] sendBytes = strJsonBody.getBytes("UTF-8");
+                    con.setFixedLengthStreamingMode(sendBytes.length);
+
+                    OutputStream outputStream = con.getOutputStream();
+                    outputStream.write(sendBytes);
+
+                    int httpResponse = con.getResponseCode();
+                    Log.e("Notification", "httpResponse: " + httpResponse);
+
+                    if (httpResponse >= HttpURLConnection.HTTP_OK
+                            && httpResponse < HttpURLConnection.HTTP_BAD_REQUEST) {
+                        Scanner scanner = new Scanner(con.getInputStream(), "UTF-8");
+                        jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                        scanner.close();
+                    } else {
+                        Scanner scanner = new Scanner(con.getErrorStream(), "UTF-8");
+                        jsonResponse = scanner.useDelimiter("\\A").hasNext() ? scanner.next() : "";
+                        scanner.close();
+                    }
+                    Log.e("Notification", "jsonResponse:\n" + jsonResponse);
+
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
             }
-        });
+        }).start();
     }
 
     public static String CopyTo(String file, String username) {
@@ -211,23 +251,30 @@ public class General {
         return returnedPath;
     }
 
-    public void SaveImage(String path) {
-        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/AgroPlus/Products/").toString();
+    public void SaveImage(final String path) {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/AgroPlus/Products/").toString();
 
-        try {
-            URL url = new URL(path);
-            InputStream inputStream = url.openStream();
-            FileOutputStream fileOutputStream = new FileOutputStream(root);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-            Toast.makeText(context, "Image saved", Toast.LENGTH_SHORT).show();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                try {
+                    URL url = new URL(path);
+                    InputStream inputStream = url.openStream();
+                    FileOutputStream fileOutputStream = new FileOutputStream(root);
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                    Toast.makeText(context, "Image saved", Toast.LENGTH_SHORT).show();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
     }
 
 }

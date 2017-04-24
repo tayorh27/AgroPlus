@@ -193,7 +193,7 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
             Date getTime = new Date(product.time);
             long milli = getTime.getTime();
             time.setText(TimeUpdate.setAgo(milli));
-            Glide.with(ViewFromOutsideActivity.this).load(product.image_dp.replace(" ", "%20")).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).into(imageDp);
+            Glide.with(ViewFromOutsideActivity.this).load(product.image_dp.replace(" ", "%20")).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(imageDp);
 
 
             try {

@@ -52,7 +52,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchHold
         Search search = searchArrayList.get(position);
         holder.tv.setText(search.username);
         String use_link = search.image_path.replace(" ", "%20");
-        Glide.with(context).load(use_link).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).into(holder.iv);
+        Glide.with(context).load(use_link).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(holder.iv);
 
     }
 
