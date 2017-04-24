@@ -22,18 +22,6 @@ public class AppData {
         pref = context.getSharedPreferences("users", Context.MODE_PRIVATE);
     }
 
-    public void setUser(User user) {
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("id", user.id);
-        editor.putString("username", user.username);
-        editor.putString("email", user.email);
-        editor.putString("mobile", user.mobile);
-        editor.putString("password", user.password);
-        editor.putString("image_path", user.image_path);
-        editor.putString("local_path", user.local_path);
-        editor.apply();
-    }
-
     public User getUser() {
         int id = pref.getInt("id", 0);
         String username = pref.getString("username", "");
@@ -46,9 +34,15 @@ public class AppData {
         return user;
     }
 
-    public void setLoggedIn(boolean loggedIn) {
+    public void setUser(User user) {
         SharedPreferences.Editor editor = pref.edit();
-        editor.putBoolean("loggedIn", loggedIn);
+        editor.putInt("id", user.id);
+        editor.putString("username", user.username);
+        editor.putString("email", user.email);
+        editor.putString("mobile", user.mobile);
+        editor.putString("password", user.password);
+        editor.putString("image_path", user.image_path);
+        editor.putString("local_path", user.local_path);
         editor.apply();
     }
 
@@ -56,9 +50,9 @@ public class AppData {
         return pref.getBoolean("loggedIn", false);
     }
 
-    public void setSearchResults(Set<String> results) {
+    public void setLoggedIn(boolean loggedIn) {
         SharedPreferences.Editor editor = pref.edit();
-        editor.putStringSet("search_results", results);
+        editor.putBoolean("loggedIn", loggedIn);
         editor.apply();
     }
 
@@ -66,14 +60,30 @@ public class AppData {
         return pref.getStringSet("search_results", new HashSet<String>());
     }
 
-    public void setHomeResults(Set<String> results) {
+    public void setSearchResults(Set<String> results) {
+        clearSearch();
         SharedPreferences.Editor editor = pref.edit();
-        editor.putStringSet("home_results", results);
+        editor.putStringSet("search_results", results);
         editor.apply();
     }
 
     public Set<String> getHomeResults() {
         return pref.getStringSet("home_results", new HashSet<String>());
+    }
+
+    public void setHomeResults(Set<String> results) {
+        clearHome();
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putStringSet("home_results", results);
+        editor.apply();
+    }
+
+    private void clearSearch() {
+        pref.edit().remove("search_results").apply();
+    }
+
+    private void clearHome() {
+        pref.edit().remove("home_results").apply();
     }
 
     public void LogOut() {

@@ -164,11 +164,14 @@
                     android:id="@+id/editPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="10dp"
                     android:layout_toRightOf="@+id/tvPrice"
-                    android:hint="Enter Price"
                     android:background="@null"
+                    android:hint="Enter Price"
                     android:inputType="number"
-                    android:text="1000" />
+                    android:text="1000"
+                    android:textSize="20sp" />
             </RelativeLayout>
 
             <com.beardedhen.androidbootstrap.BootstrapButton

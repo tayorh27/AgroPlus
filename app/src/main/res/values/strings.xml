@@ -37,4 +37,5 @@
     <string name="change_password">Change Password</string>
     <string name="title_activity_view_from_outside">Product</string>
     <string name="search">Search</string>
+    <string name="filter">Filter Products</string>
 </resources>

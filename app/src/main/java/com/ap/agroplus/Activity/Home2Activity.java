@@ -82,6 +82,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
@@ -92,30 +93,20 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class Home2Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProductsListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, ClickCallback {
 
-    //Image request code
-    private int FILTER_PRODUCT_REQUEST = 2017;
     private final static int CAMERA_RQ = 6969;
-    //Bitmap to get image from gallery
-    private Bitmap bitmap;
+    private static final String LOG_TAG = "HomeActivity";
+    private static final int GOOGLE_API_CLIENT_ID = 0;
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
+            new LatLng(0, -0), new LatLng(0, -0));
     General general;
     Options options;
-
-    //Uri to store the image uri
-    private Uri filePath;
     View slideView, dim;
     SlideUp slideUp;
     ImageView productImage;
     String image_path = AppConfig.WEB_URL + "product_images/";
     AppData data;
     AutoCompleteTextView mAutocompleteTextView;
-    private static final String LOG_TAG = "HomeActivity";
-    private static final int GOOGLE_API_CLIENT_ID = 0;
-    private GoogleApiClient mGoogleApiClient;
-    private PlaceArrayAdapter mPlaceArrayAdapter;
-    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
-            new LatLng(0, -0), new LatLng(0, -0));
     User user;
-
     HomeAdapter adapter;
     RecyclerView recylerView;
     AVLoadingIndicatorView loading;
@@ -125,7 +116,6 @@ public class Home2Activity extends AppCompatActivity
     SwipeRefreshLayout swipe;
     JSONArray jsonArray, jsonArray1;
     FileUpload fileUpload;
-
     ProgressBar progressBar;
     AwesomeTextView tv1;
     ImageView iv1, retry;
@@ -133,6 +123,40 @@ public class Home2Activity extends AppCompatActivity
     EditText edit_caption, edit_price;
     Spinner spinner;
     BootstrapCircleThumbnail thumbnail;
+    //Image request code
+    private int FILTER_PRODUCT_REQUEST = 2017;
+    //Bitmap to get image from gallery
+    private Bitmap bitmap;
+    //Uri to store the image uri
+    private Uri filePath;
+    private GoogleApiClient mGoogleApiClient;
+    private PlaceArrayAdapter mPlaceArrayAdapter;
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                Log.e(LOG_TAG, "Place query did not complete. Error: " +
+                        places.getStatus().toString());
+                return;
+            }
+            // Selecting the first object buffer.
+            final Place place = places.get(0);
+            CharSequence attributions = places.getAttributions();
+        }
+    };
+    private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
+            final String placeId = String.valueOf(item.placeId);
+            Log.i(LOG_TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+            Log.i(LOG_TAG, "Fetching details for ID: " + item.placeId);
+        }
+    };
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -235,11 +259,13 @@ public class Home2Activity extends AppCompatActivity
             String type = intent.getType();
             if (Intent.ACTION_SEND.equals(action) && type != null) {
                 if (type.startsWith("image/")) {
+                    slideUp.showImmediately();
                     slideView.setVisibility(View.VISIBLE);
                     handleSendImage(intent);
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
                 if (type.startsWith("image/")) {
+                    slideUp.showImmediately();
                     slideView.setVisibility(View.VISIBLE);
                     handleMultipleImages(intent);
                 }
@@ -283,41 +309,14 @@ public class Home2Activity extends AppCompatActivity
         mAutocompleteTextView.setOnItemClickListener(mAutoCompleteClickListener);
     }
 
-    private AdapterView.OnItemClickListener mAutoCompleteClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
-            final String placeId = String.valueOf(item.placeId);
-            Log.i(LOG_TAG, "Selected: " + item.description);
-            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
-                    .getPlaceById(mGoogleApiClient, placeId);
-            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
-            Log.i(LOG_TAG, "Fetching details for ID: " + item.placeId);
-        }
-    };
-
-    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
-        @Override
-        public void onResult(PlaceBuffer places) {
-            if (!places.getStatus().isSuccess()) {
-                Log.e(LOG_TAG, "Place query did not complete. Error: " +
-                        places.getStatus().toString());
-                return;
-            }
-            // Selecting the first object buffer.
-            final Place place = places.get(0);
-            CharSequence attributions = places.getAttributions();
-        }
-    };
-
     private void CheckDatabaseForExistingUser() {
         Set<String> getData = data.getHomeResults();
-        Log.e("search", getData.toString());
+
         ArrayList<Products> customData = new ArrayList<>();
         try {
             JSONArray _jsonArray = new JSONArray(getData.toString());
             if (_jsonArray.length() > 0) {
+                Log.e("home search", "json is > 0 true");
                 for (int i = 0; i < _jsonArray.length(); i++) {
                     JSONObject object = _jsonArray.getJSONObject(i);
                     int id = object.getInt("id");
@@ -334,10 +333,10 @@ public class Home2Activity extends AppCompatActivity
                     String product_link = object.getString("product_link");
                     Products products = new Products(id, username, location, image_dp, product_image, email, mobile, time, caption, price, category, product_link);
                     customData.add(products);
-
+                    Log.e("home search", "product added = " + username);
                 }
                 current = customData;
-                adapter.LoadRecyclerView(customData);
+                adapter.LoadRecyclerView(current);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -345,8 +344,7 @@ public class Home2Activity extends AppCompatActivity
     }
 
     private void SaveResultLoad(ArrayList<Products> _products) {
-        Set<String> currentSet = data.getHomeResults();
-        currentSet.clear();
+        Set<String> currentSet = new HashSet<>();
         for (int i = 0; i < _products.size(); i++) {
             Products products = _products.get(i);
             JSONObject jsonObject = new JSONObject();
@@ -382,11 +380,6 @@ public class Home2Activity extends AppCompatActivity
     private void startCamera() {
         File saveFolder = new File(Environment.getExternalStorageDirectory(), "Agroplus");
         saveFolder.mkdir();
-        Calendar calendar = Calendar.getInstance();
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH);
-        int year = calendar.get(Calendar.YEAR);
-        String img_name = "IMG_" + day + "" + (month + 1) + "" + year + new Random().nextInt(23041) + ".jpg";
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.withAppendedPath(Uri.parse(saveFolder.getAbsolutePath()), img_name));
         if (intent.resolveActivity(getPackageManager()) != null) {
@@ -459,46 +452,63 @@ public class Home2Activity extends AppCompatActivity
         String cat_ = spins[spinner.getSelectedItemPosition()];
         fileUpload = new FileUpload(count, Home2Activity.this, relativeLayout, progressBar, tv1, iv1, retry, edit_caption, edit_price, spinner, mAutocompleteTextView, jsonArray, cat_);
         if (count == 1) {
-            File comFile = new File(pictures.get(0));
-            File al = Compressor.getDefault(Home2Activity.this).compressToFile(comFile);
-            fileUpload.SetPaths(al.getPath(), "", "");
-            fileUpload.Upload_one(al.getPath());
+            String[] _getPath = CompressImage(pictures.get(0), "", "");
+            fileUpload.SetPaths(_getPath[0], "", "");
+            fileUpload.Upload_one(_getPath[0]);
         } else if (count == 2) {
-            File comFile = new File(pictures.get(0));
-            File comFile1 = new File(pictures.get(1));
-            File al = Compressor.getDefault(Home2Activity.this).compressToFile(comFile);
-            File al1 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile1);
-            fileUpload.SetPaths(al.getPath(), al1.getPath(), "");
-            fileUpload.Upload_two(al.getPath(), al1.getPath());
+            String[] _getPath = CompressImage(pictures.get(0), pictures.get(1), "");
+            fileUpload.SetPaths(_getPath[0], _getPath[1], "");
+            fileUpload.Upload_two(_getPath[0], _getPath[1]);
         } else if (count == 3) {
-            File comFile = new File(pictures.get(0));
-            File comFile1 = new File(pictures.get(1));
-            File comFile2 = new File(pictures.get(2));
-            File al = Compressor.getDefault(Home2Activity.this).compressToFile(comFile);
-            File al1 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile1);
-            File al2 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile2);
-            fileUpload.SetPaths(al.getPath(), al1.getPath(), al2.getPath());
-            fileUpload.Upload_three(al.getPath(), al1.getPath(), al2.getPath());
+            String[] _getPath = CompressImage(pictures.get(0), pictures.get(1), pictures.get(2));
+            fileUpload.SetPaths(_getPath[0], _getPath[1], _getPath[2]);
+            fileUpload.Upload_three(_getPath[0], _getPath[1], _getPath[2]);
         }
 
     }
 
-    private void CompressImage(String file_path, String file_path1, String file_path2) {
+    private String[] CompressImage(String file_path, String file_path1, String file_path2) {
+        String[] paths = new String[3];
         if (!file_path.isEmpty()) {
             File comFile = new File(file_path);
-            File al = Compressor.getDefault(Home2Activity.this).compressToFile(comFile);
+            File al = new Compressor.Builder(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(100)
+                    .setCompressFormat(Bitmap.CompressFormat.PNG)
+                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES + "/AgroPlus/Products").getAbsolutePath())
+                    .build()
+                    .compressToFile(comFile);
+            paths[0] = al.getPath();
             Log.e("Compress1", "File compressed to " + al.length());
         }
         if (!file_path1.isEmpty()) {
-            File comFile1 = new File(file_path1);
-            File al1 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile1);
-            Log.e("Compress1", "File compressed to " + al1.length());
+            File comFile = new File(file_path1);
+            File al = new Compressor.Builder(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(100)
+                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES + "/AgroPlus/Products").getAbsolutePath())
+                    .build()
+                    .compressToFile(comFile);
+            paths[1] = al.getPath();
         }
         if (!file_path2.isEmpty()) {
-            File comFile2 = new File(file_path2);
-            File al2 = Compressor.getDefault(Home2Activity.this).compressToFile(comFile2);
-            Log.e("Compress1", "File compressed to " + al2.length());
+            File comFile = new File(file_path2);
+            File al = new Compressor.Builder(this)
+                    .setMaxWidth(640)
+                    .setMaxHeight(480)
+                    .setQuality(100)
+                    .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_PICTURES + "/AgroPlus/Products").getAbsolutePath())
+                    .build()
+                    .compressToFile(comFile);
+            paths[2] = al.getPath();
         }
+
+        return paths;
     }
 
     public String getPath(Uri uri) {
@@ -523,7 +533,7 @@ public class Home2Activity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_RQ && resultCode == RESULT_OK && data != null) {
             slideUp.show();
-            Toast.makeText(this, "Saved to: " + data.getDataString(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "Saved to: " + data.getDataString(), Toast.LENGTH_LONG).show();
             try {
                 filePath = data.getData();
                 bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
@@ -531,7 +541,8 @@ public class Home2Activity extends AppCompatActivity
                 e.printStackTrace();
             }
             productImage.setImageBitmap(bitmap);
-            String path = getPath(filePath);
+            //String path = getPath(filePath);
+            String path = General.CopyToAgro(filePath.getPath(), user.username);
             String filename = path.substring(path.lastIndexOf("/") + 1);
             jsonArray = new JSONArray();
             jsonArray1 = new JSONArray();
@@ -554,10 +565,14 @@ public class Home2Activity extends AppCompatActivity
             jsonArray1 = new JSONArray();
 
             for (int i = 0; i < images.size(); i++) {
-                String webLink = AppConfig.WEB_URL + "product_images/" + images.get(i).name;
+                String path = General.CopyToAgro(images.get(i).path, user.username);
+                String filename = path.substring(path.lastIndexOf("/") + 1);
+                //String webLink = AppConfig.WEB_URL + "product_images/" + images.get(i).name;
+                String webLink = AppConfig.WEB_URL + "product_images/" + filename;
                 try {
                     jsonArray.put(i, webLink);
-                    jsonArray1.put(i, images.get(i).path);
+                    //jsonArray1.put(i, images.get(i).path);
+                    jsonArray1.put(i, path);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -795,8 +810,8 @@ public class Home2Activity extends AppCompatActivity
                 e.printStackTrace();
             }
             productImage.setImageBitmap(bitmap);
-            //String path = getPath(imageUri);
-            String path = imageUri.getPath();
+            String path = General.CopyToAgro(imageUri.getPath(), user.username);
+            //String path = imageUri.getPath();
             String filename = path.substring(path.lastIndexOf("/") + 1);
             jsonArray = new JSONArray();
             jsonArray1 = new JSONArray();
@@ -827,8 +842,8 @@ public class Home2Activity extends AppCompatActivity
                 productImage.setImageBitmap(bitmap);
                 for (int i = 0; i < imageUris.size(); i++) {
 
-                    //String path = getPath(imageUris.get(i));
-                    String path = imageUris.get(i).getPath();
+                    //String path = imageUris.get(i).getPath();
+                    String path = General.CopyToAgro(imageUris.get(i).getPath(), user.username);
                     String filename = path.substring(path.lastIndexOf("/") + 1);
                     jsonArray = new JSONArray();
                     jsonArray1 = new JSONArray();

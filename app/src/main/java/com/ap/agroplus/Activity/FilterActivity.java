@@ -88,12 +88,15 @@ public class FilterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int value = Integer.parseInt(String.valueOf(s));
-                int getMax = seekBar.getMax();
-                if (value <= getMax) {
-                    seekBar.setProgress(value);
-                } else {
-                    Toast.makeText(FilterActivity.this, "Maximum price reached", Toast.LENGTH_SHORT).show();
+                if (s.length() > 0) {
+                    int value = Integer.parseInt(String.valueOf(s));
+                    int getMax = seekBar.getMax();
+                    if (value <= getMax) {
+                        seekBar.setProgress(value);
+                    } else {
+                        Toast.makeText(FilterActivity.this, "Maximum price reached", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
 

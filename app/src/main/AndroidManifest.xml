@@ -152,7 +152,9 @@
         <activity
             android:name=".Activity.SearchUserActivity"
             android:label="@string/search" />
-        <activity android:name=".Activity.FilterActivity"></activity>
+        <activity
+            android:name=".Activity.FilterActivity"
+            android:label="@string/filter" />
     </application>
 
 </manifest>

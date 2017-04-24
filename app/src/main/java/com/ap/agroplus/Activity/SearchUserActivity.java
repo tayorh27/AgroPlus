@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -100,10 +101,10 @@ public class SearchUserActivity extends AppCompatActivity implements ClickCallba
         Log.e("search", getData.toString());
         ArrayList<Search> customData = new ArrayList<>();
         try {
-            JSONArray jsonArray = new JSONArray(getData.toString());
-            if (jsonArray.length() > 0) {
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+            JSONArray jsonArray1 = new JSONArray(getData.toString());
+            if (jsonArray1.length() > 0) {
+                for (int i = 0; i < jsonArray1.length(); i++) {
+                    JSONObject jsonObject = jsonArray1.getJSONObject(i);
                     String username = jsonObject.getString("username");
                     String email = jsonObject.getString("email");
                     String mob = jsonObject.getString("mobile");
@@ -134,18 +135,19 @@ public class SearchUserActivity extends AppCompatActivity implements ClickCallba
     }
 
     private void SaveResultClick(Search search) {
+        Set<String> getData = data.getSearchResults();
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("username", search.username);
             jsonObject.put("email", search.email);
             jsonObject.put("mobile", search.mobile);
             jsonObject.put("dp", search.image_path);
+
+            getData.add(jsonObject.toString());
+            data.setSearchResults(getData);
         } catch (JSONException e) {
             Log.e("SaveResultClick", e.toString());
         }
-        Set<String> currentSet = data.getSearchResults();
-        currentSet.add(jsonObject.toString());
-        data.setSearchResults(currentSet);
     }
 
     @Override

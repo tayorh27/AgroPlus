@@ -24,6 +24,7 @@ import com.ap.agroplus.VolleySingleton;
 import com.ap.agroplus.database.AppData;
 import com.ap.agroplus.information.User;
 import com.beardedhen.androidbootstrap.AwesomeTextView;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 import com.mancj.slideup.SlideUp;
 
 import org.json.JSONArray;
@@ -111,6 +112,7 @@ public class RegisterProduct {
                         General.SendNotification(user, "AgroPlus", message, jsonArray);
                     } else if (success == 0) {
                         tv.setText("Upload failed. Try again");
+                        tv.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         retry.setVisibility(View.VISIBLE);
                         retry.setTag("volley");
                         //general.dismissProgress();
@@ -126,6 +128,7 @@ public class RegisterProduct {
             public void onErrorResponse(VolleyError error) {
                 tv.setText("Upload failed. Try again");
                 retry.setVisibility(View.VISIBLE);
+                tv.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 retry.setTag("volley");
                 //general.dismissProgress();
                 //general.showAlert("An error occurred. Check your internet connection.");

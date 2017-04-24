@@ -18,15 +18,17 @@
 
             <RelativeLayout
                 android:id="@+id/r1"
-                android:layout_width="128dp"
-                android:layout_height="wrap_content"
+                android:layout_width="158dp"
+                android:layout_height="158dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="50dp">
 
                 <com.beardedhen.androidbootstrap.BootstrapCircleThumbnail
                     android:id="@+id/imageViewDp"
                     android:layout_width="128dp"
-                    android:layout_height="128dp" />
+                    android:layout_height="128dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true" />
 
                 <ProgressBar
                     android:id="@+id/myProgressBar"
@@ -39,10 +41,10 @@
                     android:indeterminateTint="@color/colorPrimary"
                     android:visibility="gone" />
 
-                <ImageView
+                <android.support.design.widget.FloatingActionButton
                     android:id="@+id/change_pic_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
                     android:onClick="UpdateImage"
@@ -94,15 +96,30 @@
                         android:textColor="@color/colorPrimary"
                         android:textSize="15sp" />
 
-                    <TextView
-                        android:id="@+id/tvEmail"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="5dp"
-                        android:paddingTop="15dp"
-                        android:text="Email"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:layout_height="wrap_content">
+
+
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="5dp"
+                            android:paddingTop="15dp"
+                            android:text="Email"
+                            android:textColor="#000"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:onClick="UpdateEmail"
+                            android:paddingBottom="5dp"
+                            android:paddingTop="15dp"
+                            android:src="@drawable/ic_mode_edit_black_24dp" />
+                    </RelativeLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -111,15 +128,30 @@
                         android:layout_marginTop="15dp"
                         android:background="#ccc" />
 
-                    <TextView
-                        android:id="@+id/tvPhone"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="5dp"
-                        android:paddingTop="15dp"
-                        android:text="Number"
-                        android:textColor="#000"
-                        android:textSize="18sp" />
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tvPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="5dp"
+                            android:paddingTop="15dp"
+                            android:text="Number"
+                            android:textColor="#000"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:onClick="UpdatePhone"
+                            android:paddingBottom="5dp"
+                            android:paddingTop="15dp"
+                            android:src="@drawable/ic_mode_edit_black_24dp" />
+
+                    </RelativeLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

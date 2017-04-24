@@ -58,7 +58,7 @@ public class GetProducts {
                             loading.smoothToHide();
                             iv.setVisibility(View.VISIBLE);
                             tv.setVisibility(View.VISIBLE);
-                            tv.setText("There is no products available.");
+                            tv.setText("There is no product available.");
                             return;
                         }
                     }
@@ -117,7 +117,7 @@ public class GetProducts {
                             loading.smoothToHide();
                             iv.setVisibility(View.VISIBLE);
                             tv.setVisibility(View.VISIBLE);
-                            tv.setText("There is no products available.");
+                            tv.setText("There is no product available.");
                             return;
                         }
                     }
@@ -176,7 +176,7 @@ public class GetProducts {
                             loading.smoothToHide();
                             iv.setVisibility(View.VISIBLE);
                             tv.setVisibility(View.VISIBLE);
-                            tv.setText("There is no products available.");
+                            tv.setText("There is no product available.");
                             return;
                         }
                     }
@@ -235,7 +235,7 @@ public class GetProducts {
                             loading.smoothToHide();
                             iv.setVisibility(View.VISIBLE);
                             tv.setVisibility(View.VISIBLE);
-                            tv.setText("There is no products available.");
+                            tv.setText("There is no product available.");
                             return;
                         }
                     }

@@ -9,14 +9,17 @@
     tools:context="com.ap.agroplus.Activity.ViewImageActivity"
     tools:showIn="@layout/activity_view_image">
 
-    <in.myinnos.imagesliderwithswipeslibrary.SliderLayout
+    <ss.com.bannerslider.views.BannerSlider
         android:id="@+id/sample"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        custom:auto_cycle="true"
-        custom:indicator_visibility="visible"
-        custom:pager_animation="Stack"
-        custom:pager_animation_span="1100" />
+        app:animateIndicators="true"
+        app:defaultIndicators="circle"
+        app:indicatorSize="5dp"
+        app:interval="5000"
+        app:loopSlides="true"
+        app:selected_slideIndicator="@drawable/indicator_circle_selected"
+        app:unselected_slideIndicator="@drawable/indicator_circle_unselected" />
 
     <RelativeLayout
         android:id="@+id/relative1"
@@ -57,7 +60,6 @@
             android:layout_below="@+id/username"
             android:layout_toRightOf="@+id/image_dp"
             android:paddingLeft="6dp"
-            android:singleLine="true"
             android:textSize="15sp"
             app:bootstrapBrand="secondary"
             app:bootstrapText="University of Lagos" />

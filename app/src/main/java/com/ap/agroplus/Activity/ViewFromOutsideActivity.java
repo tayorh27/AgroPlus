@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ap.agroplus.Callbacks.ProductsListener;
+import com.ap.agroplus.General;
 import com.ap.agroplus.R;
 import com.ap.agroplus.TimeUpdate;
 import com.ap.agroplus.information.Products;
@@ -40,10 +41,11 @@ import in.myinnos.imagesliderwithswipeslibrary.SliderLayout;
 import in.myinnos.imagesliderwithswipeslibrary.SliderTypes.BaseSliderView;
 import in.myinnos.imagesliderwithswipeslibrary.SliderTypes.TextSliderView;
 import ss.com.bannerslider.banners.RemoteBanner;
+import ss.com.bannerslider.events.OnBannerClickListener;
 import ss.com.bannerslider.views.BannerSlider;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
-public class ViewFromOutsideActivity extends AppCompatActivity implements ProductsListener, BaseSliderView.OnSliderClickListener {
+public class ViewFromOutsideActivity extends AppCompatActivity implements ProductsListener {
 
     RelativeLayout relativeLayout;
     ProgressBar progressBar;
@@ -52,11 +54,12 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
     TextView menu_textView;
     BootstrapCircleThumbnail imageDp;
     AwesomeTextView username, time, caption, category;
-    SliderLayout productDp;
+    BannerSlider productDp;
     JSONArray jsonArray;
     AppBarLayout appBarLayout;
     RelativeLayout relativeLayout1;
     int getId = 0;
+    General general;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -73,7 +76,7 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
         relativeLayout = (RelativeLayout) findViewById(R.id.layout);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.view_swipe);
-
+        general = new General(ViewFromOutsideActivity.this);
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         relativeLayout1 = (RelativeLayout) findViewById(R.id.relative1);
 
@@ -82,17 +85,17 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
         category = (AwesomeTextView) findViewById(R.id.tv_category);
         time = (AwesomeTextView) findViewById(R.id.tv_time);
         caption = (AwesomeTextView) findViewById(R.id.caption);
-        productDp = (SliderLayout) findViewById(R.id.sample);
+        productDp = (BannerSlider) findViewById(R.id.sample);
 
-        productDp.setOnClickListener(new View.OnClickListener() {
+        productDp.setOnBannerClickListener(new OnBannerClickListener() {
             @Override
-            public void onClick(View v) {
-                if (appBarLayout.getVisibility() == View.VISIBLE && relativeLayout1.getVisibility() == View.VISIBLE) {
+            public void onClick(int position) {
+                if (appBarLayout.getVisibility() == View.VISIBLE && relativeLayout.getVisibility() == View.VISIBLE) {
                     appBarLayout.setVisibility(View.GONE);
-                    relativeLayout1.setVisibility(View.GONE);
+                    relativeLayout.setVisibility(View.GONE);
                 } else {
                     appBarLayout.setVisibility(View.VISIBLE);
-                    relativeLayout1.setVisibility(View.VISIBLE);
+                    relativeLayout.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -137,7 +140,7 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
             GetProducts getProducts = new GetProducts(ViewFromOutsideActivity.this, this);
             getProducts.GetAllProductsById(getId, progressBar);
         } else {
-            Toast.makeText(ViewFromOutsideActivity.this, "Invalid agroplus url", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ViewFromOutsideActivity.this, "Invalid AgroPlus url", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -153,7 +156,6 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
     @Override
     protected void onStop() {
         super.onStop();
-        productDp.stopAutoCycle();
     }
 
     @Override
@@ -161,6 +163,16 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
         int id = item.getItemId();
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
+        }
+        if (id == R.id.action_save) {
+            try {
+                if (productDp.getCurrentSlidePosition() > 0) {
+                    String image_current_url = jsonArray.getString(productDp.getCurrentSlidePosition());
+                    general.SaveImage(image_current_url);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -187,28 +199,12 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
             try {
                 jsonArray = new JSONArray(product.product_image);
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    TextSliderView textSliderView = new TextSliderView(ViewFromOutsideActivity.this);
-                    // initialize a SliderLayout
-                    textSliderView
-                            .image(jsonArray.getString(i))
-                            .setScaleType(BaseSliderView.ScaleType.CenterCrop)
-                            .setOnSliderClickListener(ViewFromOutsideActivity.this);
-
-                    //add your extra information
-                    //textSliderView.bundle(new Bundle());
-                    //textSliderView.getBundle().putString("extra", name);
-
-                    productDp.addSlider(textSliderView);
+                    productDp.addBanner(new RemoteBanner(jsonArray.getString(i)));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
             getSupportActionBar().setTitle(product.username);
         }
-    }
-
-    @Override
-    public void onSliderClick(BaseSliderView slider) {
-
     }
 }

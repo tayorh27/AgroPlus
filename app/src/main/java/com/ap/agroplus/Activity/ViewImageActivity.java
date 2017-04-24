@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ap.agroplus.General;
 import com.ap.agroplus.R;
 import com.ap.agroplus.TimeUpdate;
 import com.beardedhen.androidbootstrap.AwesomeTextView;
@@ -33,6 +34,7 @@ import in.myinnos.imagesliderwithswipeslibrary.SliderLayout;
 import in.myinnos.imagesliderwithswipeslibrary.SliderTypes.BaseSliderView;
 import in.myinnos.imagesliderwithswipeslibrary.SliderTypes.TextSliderView;
 import ss.com.bannerslider.banners.RemoteBanner;
+import ss.com.bannerslider.events.OnBannerClickListener;
 import ss.com.bannerslider.views.BannerSlider;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -41,11 +43,12 @@ public class ViewImageActivity extends AppCompatActivity implements BaseSliderVi
     TextView menu_textView;
     BootstrapCircleThumbnail imageDp;
     AwesomeTextView username, time, caption, category;
-    SliderLayout productDp;
+    BannerSlider productDp;
     JSONArray jsonArray;
     AppBarLayout appBarLayout;
     RelativeLayout relativeLayout;
     String price = "";
+    General general;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -65,12 +68,13 @@ public class ViewImageActivity extends AppCompatActivity implements BaseSliderVi
         appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
         relativeLayout = (RelativeLayout) findViewById(R.id.relative1);
 
+        general = new General(ViewImageActivity.this);
         imageDp = (BootstrapCircleThumbnail) findViewById(R.id.image_dp);
         username = (AwesomeTextView) findViewById(R.id.username);
         category = (AwesomeTextView) findViewById(R.id.tv_category);
         time = (AwesomeTextView) findViewById(R.id.tv_time);
         caption = (AwesomeTextView) findViewById(R.id.caption);
-        productDp = (SliderLayout) findViewById(R.id.sample);
+        productDp = (BannerSlider) findViewById(R.id.sample);
 
         Bundle intent = getIntent().getExtras();
         if (intent != null) {
@@ -89,39 +93,20 @@ public class ViewImageActivity extends AppCompatActivity implements BaseSliderVi
             try {
                 jsonArray = new JSONArray(intent.getString("imgs"));
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    //productDp.addBanner(new RemoteBanner(jsonArray.getString(i)));
-                    TextSliderView textSliderView = new TextSliderView(ViewImageActivity.this);
-                    // initialize a SliderLayout
-                    textSliderView
-                            .image(jsonArray.getString(i))
-                            .setScaleType(BaseSliderView.ScaleType.CenterCrop)
-                            .setOnSliderClickListener(ViewImageActivity.this);
-
-                    //add your extra information
-                    //textSliderView.bundle(new Bundle());
-                    //textSliderView.getBundle().putString("extra", name);
-
-                    productDp.addSlider(textSliderView);
+                    productDp.addBanner(new RemoteBanner(jsonArray.getString(i)));
                 }
                 //Glide.with(ViewImageActivity.this).load(jsonArray.getString(1).replace(" ", "%20")).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).into(productDp);
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            productDp.setPresetTransformer(SliderLayout.Transformer.Stack);
-            productDp.setPresetIndicator(SliderLayout.PresetIndicators.Center_Top);
-            productDp.setCustomAnimation(new DescriptionAnimation());
-            productDp.setDuration(4000);
-
-            productDp.setPresetTransformer("Stack");
             getSupportActionBar().setTitle(intent.getString("username"));
 
         }
 
-        productDp.setOnClickListener(new View.OnClickListener() {
+        productDp.setOnBannerClickListener(new OnBannerClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(int position) {
                 if (appBarLayout.getVisibility() == View.VISIBLE && relativeLayout.getVisibility() == View.VISIBLE) {
                     appBarLayout.setVisibility(View.GONE);
                     relativeLayout.setVisibility(View.GONE);
@@ -137,7 +122,6 @@ public class ViewImageActivity extends AppCompatActivity implements BaseSliderVi
     @Override
     protected void onStop() {
         super.onStop();
-        productDp.stopAutoCycle();
     }
 
     @Override
@@ -155,6 +139,16 @@ public class ViewImageActivity extends AppCompatActivity implements BaseSliderVi
         int id = item.getItemId();
         if (id == android.R.id.home) {
             finish();
+        }
+        if (id == R.id.action_save) {
+            try {
+                if(productDp.getCurrentSlidePosition() > 0) {
+                    String image_current_url = jsonArray.getString(productDp.getCurrentSlidePosition());
+                    general.SaveImage(image_current_url);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
         return super.onOptionsItemSelected(item);
     }

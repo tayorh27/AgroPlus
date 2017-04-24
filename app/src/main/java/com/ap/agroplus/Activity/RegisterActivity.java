@@ -58,21 +58,18 @@ public class RegisterActivity extends AppCompatActivity {
     EditText et_username, et_email, et_mobile, et_password;
     General general;
     CircleImageView imageView;
-
-    //Image request code
-    private int PICK_IMAGE_REQUEST = 1;
-    //Bitmap to get image from gallery
-    private Bitmap bitmap;
-
-    //Uri to store the image uri
-    private Uri filePath;
-    String image_path = AppConfig.WEB_URL + "displayimages/";
     AppData data;
-
     int upload_image_code = 0;
     String username, email, mobile, password;
     BootstrapButton bootstrapButton;
     String path = "", access_code = "";
+    String image_path = "";
+    //Image request code
+    private int PICK_IMAGE_REQUEST = 1;
+    //Bitmap to get image from gallery
+    private Bitmap bitmap;
+    //Uri to store the image uri
+    private Uri filePath;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -140,8 +137,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setAutoZoomEnabled(true)
                         .setOutputCompressQuality(100)
-                        .setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
-                        //.setOutputUri(Uri.fromFile(file))
+                        .setOutputCompressFormat(Bitmap.CompressFormat.PNG)
                         .start(this);
         }
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -201,9 +197,14 @@ public class RegisterActivity extends AppCompatActivity {
             general.showAlert("Please upload a picture.");
             return;
         }
-        path = filePath.getPath();//getPath(filePath);
+        //File image_file = new File(filePath.getPath());
+        //image_file.renameTo(new_image_file);
+        //path = filePath.getPath();
+        //path = new_image_file.getPath();
+        //path = General.CopyTo(filePath.getPath(), username);
+        path = general.CompressImageForDp(General.CopyTo(filePath.getPath(), username));
         String filename = path.substring(path.lastIndexOf("/") + 1);
-        image_path += filename;
+        image_path = AppConfig.WEB_URL + "displayimages/" + filename;
         Log.e("register", "path = " + path + " filename = " + filename);
         access_code = "AP" + username.substring(0, 1) + email.substring(0, 1) + new Random().nextInt(9000);
         String tag = bootstrapButton.getTag().toString();

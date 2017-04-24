@@ -6,9 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,13 +19,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.ap.agroplus.ApiConfig;
 import com.ap.agroplus.AppConfig;
+import com.ap.agroplus.General;
 import com.ap.agroplus.R;
 import com.ap.agroplus.ServerResponse;
 import com.ap.agroplus.database.AppData;
 import com.ap.agroplus.information.User;
 import com.ap.agroplus.network.RegisterUser;
+import com.ap.agroplus.network.UpdateUser;
 import com.ap.agroplus.network.UpdateUserImage;
 import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
 import com.bumptech.glide.Glide;
@@ -46,16 +53,18 @@ public class ProfileActivity extends AppCompatActivity {
     BootstrapCircleThumbnail iv;
     TextView username, email, phone;
     AppData data;
-
+    String image_path = "";
+    ProgressBar progressBar;
+    User user;
+    General general;
+    UpdateUser updateUser;
+    String updated_email = "", updated_number = "";
     //Image request code
     private int PICK_IMAGE_REQUEST = 1;
     //Bitmap to get image from gallery
     private Bitmap bitmap;
-
     //Uri to store the image uri
     private Uri filePath;
-    String image_path = AppConfig.WEB_URL + "displayimages/";
-    ProgressBar progressBar;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -71,7 +80,8 @@ public class ProfileActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         data = new AppData(ProfileActivity.this);
-        User user = data.getUser();
+        general = new General(ProfileActivity.this);
+        user = data.getUser();
 
         iv = (BootstrapCircleThumbnail) findViewById(R.id.imageViewDp);
         username = (TextView) findViewById(R.id.tvUsername);
@@ -130,9 +140,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void UpdateImageNow() {
-        String path = filePath.getPath();//getPath(filePath);
+        //String path = filePath.getPath();//getPath(filePath);
+        String path = general.CompressImageForDp(General.CopyTo(filePath.getPath(), user.username));
         String filename = path.substring(path.lastIndexOf("/") + 1);
-        image_path += filename;
+        image_path = AppConfig.WEB_URL + "displayimages/" + filename;
         Log.e("register", "path = " + path + " filename = " + filename);
         Upload_one(path, image_path);
     }
@@ -192,5 +203,66 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(ProfileActivity.this, "An error occurred. Check your internet connectivity", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void UpdateEmail(View view) {
+        new MaterialDialog.Builder(ProfileActivity.this)
+                .title("Update your email address")
+                .inputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
+                .input("Enter email address here", "", false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        updated_email = String.valueOf(input);
+                    }
+                })
+                .positiveText("Update")
+                .negativeText("Cancel")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        runEmailUpdate();
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    public void UpdatePhone(View view) {
+        new MaterialDialog.Builder(ProfileActivity.this)
+                .title("Update your phone number")
+                .inputType(InputType.TYPE_NUMBER_VARIATION_NORMAL)
+                .inputRange(2, 15, getResources().getColor(R.color.bootstrap_brand_danger))
+                .input("Enter phone number here", "", false, new MaterialDialog.InputCallback() {
+                    @Override
+                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                        updated_number = String.valueOf(input);
+                    }
+                })
+                .positiveText("Update")
+                .negativeText("Cancel")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        runPhoneUpdate();
+                        dialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+    private void runPhoneUpdate() {
+        updateUser = new UpdateUser(ProfileActivity.this, updated_email, "", "");
+        updateUser.UpdateUserPhone(updated_number, phone);
+
+    }
+
+    private void runEmailUpdate() {
+        if (!Patterns.EMAIL_ADDRESS.matcher(updated_email).matches()) {
+            general.showAlert("Invalid email address");
+            return;
+        }
+        updateUser = new UpdateUser(ProfileActivity.this, updated_email, "", "");
+        updateUser.UpdateUserEmail(email);
+
     }
 }

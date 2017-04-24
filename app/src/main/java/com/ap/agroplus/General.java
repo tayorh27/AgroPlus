@@ -1,7 +1,11 @@
 package com.ap.agroplus;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.ap.agroplus.information.User;
@@ -10,6 +14,18 @@ import com.onesignal.OneSignal;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.Random;
+
+import id.zelory.compressor.Compressor;
 
 /**
  * Created by sanniAdewale on 10/03/2017.
@@ -22,6 +38,94 @@ public class General {
 
     public General(Context context) {
         this.context = context;
+    }
+
+    public static void SendNotification(User user, String title, String message, JSONArray jsonArray1) {
+        JSONObject object = new JSONObject();
+
+        JSONArray jsonArray;
+        jsonArray = new JSONArray();
+        try {
+            jsonArray.put(0, "Active Users");
+            jsonArray.put(1, "Inactive Users");
+            jsonArray.put(2, "Engaged Users");
+
+            JSONObject object_content = new JSONObject();
+            object_content.put("en", "English Message");
+            JSONObject object_data = new JSONObject();
+            object_data.put(title, message);
+            object.put("included_segments", jsonArray.toString());
+            object.put("contents", object_content.toString());
+            object.put("data", object_data.toString());
+            object.put("small_icon", user.image_path);
+            object.put("large_icon", user.image_path);
+            object.put("big_picture", jsonArray.getString(0));
+        } catch (JSONException e) {
+            Log.e("push noti", e.toString());
+        }
+        OneSignal.postNotification(object, new OneSignal.PostNotificationResponseHandler() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Log.e("push success", "done");
+            }
+
+            @Override
+            public void onFailure(JSONObject response) {
+                Log.e("push fail", "failed");
+            }
+        });
+    }
+
+    public static String CopyTo(String file, String username) {
+        String new_file_path = "";
+        try {
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
+            File myDir1 = new File(root + "/AgroPlus/");
+            Calendar calendar = Calendar.getInstance();
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int month = calendar.get(Calendar.MONTH);
+            int year = calendar.get(Calendar.YEAR);
+            File new_image_file = new File(myDir1.toString() + "/img_" + username + "_" + day + "" + (month + 1) + "" + year + ".png");
+
+            String dest = new_image_file.getPath();
+            new_file_path = dest;
+            if (new_image_file.exists()) {
+                new_image_file.delete();
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(dest);
+            Bitmap bitmap = BitmapFactory.decodeFile(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 75, fileOutputStream);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new_file_path;
+    }
+
+    public static String CopyToAgro(String file, String username) {
+        String new_file_path = "";
+        try {
+            String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/AgroPlus/").toString();
+            File myDir1 = new File(root);
+            Calendar calendar = Calendar.getInstance();
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int month = calendar.get(Calendar.MONTH);
+            int year = calendar.get(Calendar.YEAR);
+            File new_image_file = new File(myDir1.toString() + "/img_product_" + username + "_" + day + "" + (month + 1) + "" + year + "_" + new Random().nextInt(93564517) + ".png");
+
+            String dest = new_image_file.getPath();
+            new_file_path = dest;
+            if (new_image_file.exists()) {
+                new_image_file.delete();
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(dest);
+            Bitmap bitmap = BitmapFactory.decodeFile(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 70, fileOutputStream);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new_file_path;
     }
 
     public void showProgress(String text) {
@@ -75,39 +179,55 @@ public class General {
                 .show();
     }
 
-    public static void SendNotification(User user, String title, String message, JSONArray jsonArray1) {
-        JSONObject object = new JSONObject();
-
-        JSONArray jsonArray;
-        jsonArray = new JSONArray();
-        try {
-            jsonArray.put(0, "Active Users");
-            jsonArray.put(1, "Inactive Users");
-            jsonArray.put(2, "Engaged Users");
-
-            JSONObject object_content = new JSONObject();
-            object_content.put("en", "English Message");
-            JSONObject object_data = new JSONObject();
-            object_data.put(title, message);
-            object.put("included_segments", jsonArray.toString());
-            object.put("contents", object_content.toString());
-            object.put("data", object_data.toString());
-            object.put("small_icon", user.image_path);
-            object.put("large_icon", user.image_path);
-            object.put("big_picture", jsonArray.getString(0));
-        } catch (JSONException e) {
-            Log.e("push noti", e.toString());
-        }
-        OneSignal.postNotification(object, new OneSignal.PostNotificationResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                Log.e("push success", "done");
-            }
-
-            @Override
-            public void onFailure(JSONObject response) {
-                Log.e("push fail", "failed");
-            }
-        });
+    public String CompressImageForDp(String file_path) {
+        String returnedPath = "";
+        File comFile = new File(file_path);
+        File al = new Compressor.Builder(context)
+                .setMaxWidth(640)
+                .setMaxHeight(480)
+                .setQuality(100)
+                .setCompressFormat(Bitmap.CompressFormat.PNG)
+                .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES + "/AgroPlus/Dp").getAbsolutePath())
+                .build()
+                .compressToFile(comFile);
+        returnedPath = al.getPath();
+        return returnedPath;
     }
+
+    public String CompressImageForProduct(String file_path) {
+        String returnedPath = "";
+        File comFile = new File(file_path);
+        File al = new Compressor.Builder(context)
+                .setMaxWidth(640)
+                .setMaxHeight(480)
+                .setQuality(100)
+                .setCompressFormat(Bitmap.CompressFormat.PNG)
+                .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES + "/AgroPlus/Products").getAbsolutePath())
+                .build()
+                .compressToFile(comFile);
+        returnedPath = al.getPath();
+        return returnedPath;
+    }
+
+    public void SaveImage(String path) {
+        String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/AgroPlus/Products/").toString();
+
+        try {
+            URL url = new URL(path);
+            InputStream inputStream = url.openStream();
+            FileOutputStream fileOutputStream = new FileOutputStream(root);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+            Toast.makeText(context, "Image saved", Toast.LENGTH_SHORT).show();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

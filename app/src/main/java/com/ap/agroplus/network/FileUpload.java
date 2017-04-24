@@ -20,6 +20,7 @@ import com.ap.agroplus.database.AppData;
 import com.ap.agroplus.information.User;
 import com.beardedhen.androidbootstrap.AwesomeTextView;
 import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
+import com.beardedhen.androidbootstrap.api.defaults.DefaultBootstrapBrand;
 
 import org.json.JSONArray;
 
@@ -101,6 +102,7 @@ public class FileUpload {
 
     private void retry_upload() {
         tv.setText("Uploading your product...");
+        tv.setBootstrapBrand(DefaultBootstrapBrand.INFO);
         if (count == 1) {
             Upload_one(pt1);
         } else if (count == 2) {
@@ -135,6 +137,7 @@ public class FileUpload {
                     } else {
                         Log.e("tonFailure", serverResponse.getMessage());
                         tv.setText("Upload failed. Try again");
+                        tv.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         retry.setVisibility(View.VISIBLE);
                         //Toast.makeText(context, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -146,8 +149,9 @@ public class FileUpload {
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                Log.e("onFailure", t.getMessage());
+                Log.e("onFailure", "error = " + t.getMessage());
                 tv.setText("Upload failed. Try again");
+                tv.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 retry.setVisibility(View.VISIBLE);
                 //Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -181,6 +185,7 @@ public class FileUpload {
                     } else {
                         Log.e("tonFailure", serverResponse.getMessage());
                         tv.setText("Upload failed. Try again");
+                        tv.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         retry.setVisibility(View.VISIBLE);
                         //Toast.makeText(context, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -192,8 +197,9 @@ public class FileUpload {
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                Log.e("onFailure", t.getMessage());
+                Log.e("onFailure", "error = " + t.getMessage());
                 tv.setText("Upload failed. Try again");
+                tv.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 retry.setVisibility(View.VISIBLE);
                 //Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -230,6 +236,7 @@ public class FileUpload {
                     } else {
                         Log.e("tonFailure", serverResponse.getMessage());
                         tv.setText("Upload failed. Try again");
+                        tv.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                         retry.setVisibility(View.VISIBLE);
                         //Toast.makeText(context, serverResponse.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -241,8 +248,9 @@ public class FileUpload {
 
             @Override
             public void onFailure(Call<ServerResponse> call, Throwable t) {
-                Log.e("onFailure", t.getMessage());
+                Log.e("onFailure", "error = " + t.getMessage());
                 tv.setText("Upload failed. Try again");
+                tv.setBootstrapBrand(DefaultBootstrapBrand.DANGER);
                 retry.setVisibility(View.VISIBLE);
                 //Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
@@ -252,6 +260,7 @@ public class FileUpload {
 
     public void uploadProduct() {
         tv.setText("Finishing Up...");
+        tv.setBootstrapBrand(DefaultBootstrapBrand.INFO);
         User user = data.getUser();
         int username = user.id;
         String uploaded_image = jsonArray.toString();

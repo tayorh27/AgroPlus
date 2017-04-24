@@ -69,6 +69,7 @@ public class RegisterUser {
                     success = object.getInt("success");
                     if (success == 1) {
                         general.dismissProgress();
+                        button.setTag("login");
                         GetLoginFromServer getLoginFromServer = new GetLoginFromServer(context, username, password);
                         getLoginFromServer.LoginAfterReg(button, activity);
                         //Toast.makeText(context, "Registration successful. Login now.", Toast.LENGTH_LONG).show();
