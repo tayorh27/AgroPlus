@@ -12,7 +12,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        manifestPlaceholders = [onesignal_app_id: "72819f19-0dc6-4bb8-9c22-4723a5272d57",
+        manifestPlaceholders = [onesignal_app_id               : "72819f19-0dc6-4bb8-9c22-4723a5272d57",
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "763760722082"]
     }
@@ -76,5 +76,7 @@ dependencies {
     compile 'com.devs:acr:1.0.1'
     compile 'com.ss.bannerslider:bannerslider:1.6.1'
     compile 'com.romainpiel.shimmer:library:1.4.0@aar'
+    compile 'com.github.medyo:android-about-page:1.2'
+    compile 'com.hardsoftstudio.real.textview:library:0.9.0'
     testCompile 'junit:junit:4.12'
 }

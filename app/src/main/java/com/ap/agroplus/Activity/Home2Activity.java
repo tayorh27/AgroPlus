@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -62,6 +64,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.darsh.multipleimageselect.activities.AlbumSelectActivity;
 import com.darsh.multipleimageselect.helpers.Constants;
 import com.darsh.multipleimageselect.models.Image;
+import com.github.bijoysingh.starter.util.PermissionManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -169,6 +172,9 @@ public class Home2Activity extends AppCompatActivity
         setContentView(R.layout.activity_home2);
 
         First_Initial();
+        if (Build.VERSION.SDK_INT > 19) {
+            RequestPermissions();
+        }
 
     }
 
@@ -489,6 +495,7 @@ public class Home2Activity extends AppCompatActivity
                     .setMaxWidth(640)
                     .setMaxHeight(480)
                     .setQuality(100)
+                    .setCompressFormat(Bitmap.CompressFormat.PNG)
                     .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_PICTURES + "/AgroPlus/Products").getAbsolutePath())
                     .build()
@@ -501,6 +508,7 @@ public class Home2Activity extends AppCompatActivity
                     .setMaxWidth(640)
                     .setMaxHeight(480)
                     .setQuality(100)
+                    .setCompressFormat(Bitmap.CompressFormat.PNG)
                     .setDestinationDirectoryPath(Environment.getExternalStoragePublicDirectory(
                             Environment.DIRECTORY_PICTURES + "/AgroPlus/Products").getAbsolutePath())
                     .build()
@@ -536,8 +544,9 @@ public class Home2Activity extends AppCompatActivity
             //Toast.makeText(this, "Saved to: " + data.getDataString(), Toast.LENGTH_LONG).show();
             try {
                 filePath = data.getData();
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-            } catch (IOException e) {
+                //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                bitmap = BitmapFactory.decodeFile(filePath.getPath());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             productImage.setImageBitmap(bitmap);
@@ -654,8 +663,10 @@ public class Home2Activity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_gallery) {
-
+        if (id == R.id.nav_about) {
+            startActivity(new Intent(Home2Activity.this, AboutActivity.class));
+        } else if (id == R.id.nav_policy) {
+            startActivity(new Intent(Home2Activity.this, PolicyActivity.class));
         } else if (id == R.id.nav_contact) {
             startActivity(new Intent(Home2Activity.this, ContactActivity.class));
         } else if (id == R.id.nav_profile) {
@@ -797,6 +808,22 @@ public class Home2Activity extends AppCompatActivity
         }
     }
 
+    private void RequestPermissions() {
+        // Could be more than one permissions here
+        String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CALL_PHONE};
+
+        // Initialise the manager object, with required permissions
+        PermissionManager manager = new PermissionManager(Home2Activity.this, permissions);
+
+        if (!manager.hasAllPermissions()) {
+            manager.requestPermissions();
+        }
+    }
+
 
     private void handleSendImage(Intent intent) {
         Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
@@ -805,8 +832,9 @@ public class Home2Activity extends AppCompatActivity
             Log.e("handleSendImage", "after imageUri != null");
             slideUp.show();
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-            } catch (IOException e) {
+                //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                bitmap = BitmapFactory.decodeFile(imageUri.getPath());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             productImage.setImageBitmap(bitmap);
@@ -838,7 +866,8 @@ public class Home2Activity extends AppCompatActivity
             Log.e("handleMultipleImages", "after imageUri != null");
             slideUp.show();
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUris.get(0));
+                //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUris.get(0));
+                bitmap = BitmapFactory.decodeFile(imageUris.get(0).getPath());
                 productImage.setImageBitmap(bitmap);
                 for (int i = 0; i < imageUris.size(); i++) {
 
@@ -856,7 +885,7 @@ public class Home2Activity extends AppCompatActivity
                     }
                     Log.e("filename", "camera = " + filename);
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Toast.makeText(this, "File path not found", Toast.LENGTH_SHORT).show();
             }
         }

@@ -125,7 +125,7 @@ public class General {
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             int month = calendar.get(Calendar.MONTH);
             int year = calendar.get(Calendar.YEAR);
-            File new_image_file = new File(myDir1.toString() + "/img_" + username + "_" + day + "" + (month + 1) + "" + year + ".png");
+            File new_image_file = new File(myDir1.toString() + "/img_" + username + "_" + day + "" + (month + 1) + "" + year + "_" + new Random().nextInt(93564517) + ".png");
 
             String dest = new_image_file.getPath();
             new_file_path = dest;
@@ -134,10 +134,12 @@ public class General {
             }
             FileOutputStream fileOutputStream = new FileOutputStream(dest);
             Bitmap bitmap = BitmapFactory.decodeFile(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 75, fileOutputStream);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (Exception ex) {
+            Log.e("normal exception", ex.toString());
         }
         return new_file_path;
     }
@@ -160,10 +162,12 @@ public class General {
             }
             FileOutputStream fileOutputStream = new FileOutputStream(dest);
             Bitmap bitmap = BitmapFactory.decodeFile(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 70, fileOutputStream);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Log.e("file not found", e.toString());
+        } catch (Exception ex) {
+            Log.e("normal exception", ex.toString());
         }
         return new_file_path;
     }
@@ -252,11 +256,10 @@ public class General {
     }
 
     public void SaveImage(final String path) {
-        Thread thread = new Thread() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                super.run();
-                String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/AgroPlus/Products/").toString();
+                String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/AgroPlus/Products/meee.png").toString();
 
                 try {
                     URL url = new URL(path);
@@ -273,8 +276,6 @@ public class General {
                     e.printStackTrace();
                 }
             }
-        };
-        thread.start();
+        }).start();
     }
-
 }

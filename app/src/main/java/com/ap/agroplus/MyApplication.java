@@ -21,6 +21,14 @@ public class MyApplication extends Application {
 
     private static MyApplication sInstance;
 
+    public static MyApplication getInstance() {
+        return sInstance;
+    }
+
+    public static Context getAppContext() {
+        return sInstance.getApplicationContext();
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -42,17 +50,9 @@ public class MyApplication extends Application {
         OneSignal.startInit(this)
                 .disableGmsMissingPrompt(true)
                 .init();
-//        AutoErrorReporter.get(this)
-//                .setEmailAddresses(AppConfig.EMAIL_ADDRESS)
-//                .setEmailSubject("Auto Crash Report")
-//                .start();
-    }
-
-    public static MyApplication getInstance() {
-        return sInstance;
-    }
-
-    public static Context getAppContext() {
-        return sInstance.getApplicationContext();
+        AutoErrorReporter.get(this)
+                .setEmailAddresses(AppConfig.EMAIL_ADDRESS)
+                .setEmailSubject("Auto Crash Report")
+                .start();
     }
 }

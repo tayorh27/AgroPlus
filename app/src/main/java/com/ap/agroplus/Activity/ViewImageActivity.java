@@ -110,9 +110,11 @@ public class ViewImageActivity extends AppCompatActivity implements BaseSliderVi
                 if (appBarLayout.getVisibility() == View.VISIBLE && relativeLayout.getVisibility() == View.VISIBLE) {
                     appBarLayout.setVisibility(View.GONE);
                     relativeLayout.setVisibility(View.GONE);
+                    productDp.setHideIndicators(true);
                 } else {
                     appBarLayout.setVisibility(View.VISIBLE);
                     relativeLayout.setVisibility(View.VISIBLE);
+                    productDp.setHideIndicators(false);
                 }
             }
         });
@@ -142,8 +144,9 @@ public class ViewImageActivity extends AppCompatActivity implements BaseSliderVi
         }
         if (id == R.id.action_save) {
             try {
-                if(productDp.getCurrentSlidePosition() > 0) {
+                if (productDp.getCurrentSlidePosition() > 0) {
                     String image_current_url = jsonArray.getString(productDp.getCurrentSlidePosition());
+                    Log.e("image_url", "at = " + productDp.getCurrentSlidePosition() + ". " + image_current_url);
                     general.SaveImage(image_current_url);
                 }
             } catch (JSONException e) {

@@ -93,9 +93,11 @@ public class ViewFromOutsideActivity extends AppCompatActivity implements Produc
                 if (appBarLayout.getVisibility() == View.VISIBLE && relativeLayout.getVisibility() == View.VISIBLE) {
                     appBarLayout.setVisibility(View.GONE);
                     relativeLayout.setVisibility(View.GONE);
+                    productDp.setHideIndicators(true);
                 } else {
                     appBarLayout.setVisibility(View.VISIBLE);
                     relativeLayout.setVisibility(View.VISIBLE);
+                    productDp.setHideIndicators(false);
                 }
             }
         });

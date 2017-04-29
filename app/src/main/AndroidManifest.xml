@@ -155,6 +155,8 @@
         <activity
             android:name=".Activity.FilterActivity"
             android:label="@string/filter" />
+        <activity android:name=".Activity.AboutActivity" />
+        <activity android:name=".Activity.PolicyActivity"></activity>
     </application>
 
 </manifest>
