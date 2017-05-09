@@ -25,6 +25,9 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         tv = (RealTextView) findViewById(R.id.tvAbout);
         tv.setHtmlFromString("<h2 style=\"text-align: center;\"><strong><u>About AgroPlus</u></strong></h2>\n" +
                 "<strong>AgroPlus</strong> connects People to buy, sell or exchange Agricultural products and services by making it fast and easy for anyone to post a listing through their <strong>AgroPlus</strong> Mobile App.\n" +

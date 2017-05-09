@@ -78,5 +78,7 @@ dependencies {
     compile 'com.romainpiel.shimmer:library:1.4.0@aar'
     compile 'com.github.medyo:android-about-page:1.2'
     compile 'com.hardsoftstudio.real.textview:library:0.9.0'
+    compile 'com.wajahatkarim3.LongImageCamera:LongImageCamera:1.0.1'
+    compile 'io.github.memfis19:annca:0.3.7'
     testCompile 'junit:junit:4.12'
 }

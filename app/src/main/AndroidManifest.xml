@@ -155,8 +155,24 @@
         <activity
             android:name=".Activity.FilterActivity"
             android:label="@string/filter" />
-        <activity android:name=".Activity.AboutActivity" />
-        <activity android:name=".Activity.PolicyActivity"></activity>
+        <activity
+            android:name=".Activity.AboutActivity"
+            android:label="@string/about" />
+        <activity
+            android:name=".Activity.PolicyActivity"
+            android:label="@string/policy" />
+        <activity
+            android:name="io.github.memfis19.annca.internal.ui.camera.Camera1Activity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeFullscreen" />
+        <activity
+            android:name="io.github.memfis19.annca.internal.ui.camera2.Camera2Activity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeFullscreen" />
+        <activity
+            android:name="io.github.memfis19.annca.internal.ui.preview.PreviewActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeFullscreen" />
     </application>
 
 </manifest>

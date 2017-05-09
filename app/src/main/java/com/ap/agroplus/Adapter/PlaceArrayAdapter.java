@@ -77,8 +77,8 @@ public class PlaceArrayAdapter
                     .await(60, TimeUnit.SECONDS);
             final Status status = autocompletePredictions.getStatus();
             if (!status.isSuccess()) {
-                Toast.makeText(getContext(), "Error: " + status.toString(),
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "Error: " + status.toString(),
+//                        Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Error getting place predictions: " + status
                         .toString());
                 autocompletePredictions.release();

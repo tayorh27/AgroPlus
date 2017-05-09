@@ -38,4 +38,6 @@
     <string name="title_activity_view_from_outside">Product</string>
     <string name="search">Search</string>
     <string name="filter">Filter Products</string>
+    <string name="about">About AgroPlus</string>
+    <string name="policy">Policy</string>
 </resources>

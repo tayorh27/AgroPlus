@@ -18,7 +18,7 @@
         app:defaultIndicators="circle"
         app:indicatorSize="5dp"
         app:interval="5000"
-        app:loopSlides="true"
+        app:loopSlides="false"
         app:selected_slideIndicator="@drawable/indicator_circle_selected"
         app:unselected_slideIndicator="@drawable/indicator_circle_unselected" />
 

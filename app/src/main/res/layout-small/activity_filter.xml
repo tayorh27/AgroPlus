@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.ap.agroplus.Activity.FilterActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter by"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="30dp"
+                android:text="Category"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.beardedhen.androidbootstrap.BootstrapLabel
+                    android:id="@+id/ls"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:drawableRight="@drawable/ic_add_white_24px"
+                    android:onClick="CategoryClick"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapHeading="h5"
+                    app:bootstrapText="Livestock" />
+
+                <com.beardedhen.androidbootstrap.BootstrapLabel
+                    android:id="@+id/fd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:drawableRight="@drawable/ic_add_white_24px"
+                    android:onClick="CategoryClick"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapHeading="h5"
+                    app:bootstrapText="Feeds" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.beardedhen.androidbootstrap.BootstrapLabel
+                    android:id="@+id/cp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:drawableRight="@drawable/ic_add_white_24px"
+                    android:onClick="CategoryClick"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapHeading="h5"
+                    app:bootstrapText="Crops" />
+
+                <com.beardedhen.androidbootstrap.BootstrapLabel
+                    android:id="@+id/fz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:drawableRight="@drawable/ic_add_white_24px"
+                    android:onClick="CategoryClick"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapHeading="h5"
+                    app:bootstrapText="Fertilizer" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.beardedhen.androidbootstrap.BootstrapLabel
+                    android:id="@+id/my"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:drawableRight="@drawable/ic_add_white_24px"
+                    android:onClick="CategoryClick"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapHeading="h5"
+                    app:bootstrapText="Machinery" />
+
+                <com.beardedhen.androidbootstrap.BootstrapLabel
+                    android:id="@+id/gn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:drawableRight="@drawable/ic_add_white_24px"
+                    android:onClick="CategoryClick"
+                    app:bootstrapBrand="primary"
+                    app:bootstrapHeading="h5"
+                    app:bootstrapText="Grains" />
+
+
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="30dp"
+                android:text="Price"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <SeekBar
+                android:id="@+id/price_seek"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="5000000"
+                android:progress="500" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="₦"
+                    android:textColor="#000"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/editPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@+id/tvPrice"
+                    android:background="@null"
+                    android:hint="Enter Price"
+                    android:inputType="number"
+                    android:text="1000"
+                    android:textSize="20sp" />
+            </RelativeLayout>
+
+            <com.beardedhen.androidbootstrap.BootstrapButton
+                android:id="@+id/btnFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:onClick="Submit"
+                android:visibility="gone"
+                app:bootstrapBrand="success"
+                app:bootstrapSize="xl"
+                app:bootstrapText="Filter"
+                app:roundedCorners="true" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

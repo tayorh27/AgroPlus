@@ -118,6 +118,7 @@ public class General {
 
     public static String CopyTo(String file, String username) {
         String new_file_path = "";
+        FileOutputStream fileOutputStream = null;
         try {
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString();
             File myDir1 = new File(root + "/AgroPlus/");
@@ -132,7 +133,7 @@ public class General {
             if (new_image_file.exists()) {
                 new_image_file.delete();
             }
-            FileOutputStream fileOutputStream = new FileOutputStream(dest);
+            fileOutputStream = new FileOutputStream(dest);
             Bitmap bitmap = BitmapFactory.decodeFile(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
 
@@ -140,12 +141,21 @@ public class General {
             e.printStackTrace();
         } catch (Exception ex) {
             Log.e("normal exception", ex.toString());
+        }finally {
+            if(fileOutputStream != null){
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return new_file_path;
     }
 
     public static String CopyToAgro(String file, String username) {
         String new_file_path = "";
+        FileOutputStream fileOutputStream = null;
         try {
             String root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/AgroPlus/").toString();
             File myDir1 = new File(root);
@@ -160,14 +170,23 @@ public class General {
             if (new_image_file.exists()) {
                 new_image_file.delete();
             }
-            FileOutputStream fileOutputStream = new FileOutputStream(dest);
+            fileOutputStream = new FileOutputStream(dest);
             Bitmap bitmap = BitmapFactory.decodeFile(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, fileOutputStream);
+
 
         } catch (FileNotFoundException e) {
             Log.e("file not found", e.toString());
         } catch (Exception ex) {
             Log.e("normal exception", ex.toString());
+        }finally {
+            if(fileOutputStream != null){
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return new_file_path;
     }

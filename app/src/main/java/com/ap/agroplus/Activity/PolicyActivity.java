@@ -25,6 +25,9 @@ public class PolicyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_policy);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         tv = (RealTextView) findViewById(R.id.tvPolicy);
         tv.setHtmlFromString("<h2 style=\"text-align: center;\"><strong><u>Description of Service and content policy</u></strong></h2>\n" +
                 "<strong>AgroPlus</strong> is not in any way involved in any form transaction between Users. As a result, and as discussed in more detail in these Terms, you hereby acknowledge and agree that AgroPlus is not a party to such transactions, has no control over any element of such transactions, and shall have no liability towards any party in connection with such transactions. You use the App and it’s service at your sole risk and responsibility.\n" +

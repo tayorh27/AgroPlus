@@ -194,18 +194,19 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
         if (filePath == null) {
-            general.showAlert("Please upload a picture.");
-            return;
+            image_path = AppConfig.WEB_URL + "displayimages/" + "agro_avatar.jpg";
+            bootstrapButton.setTag("register");
+        } else {
+            path = general.CompressImageForDp(General.CopyTo(filePath.getPath(), username));
+            String filename = path.substring(path.lastIndexOf("/") + 1);
+            image_path = AppConfig.WEB_URL + "displayimages/" + filename;
         }
         //File image_file = new File(filePath.getPath());
         //image_file.renameTo(new_image_file);
         //path = filePath.getPath();
         //path = new_image_file.getPath();
         //path = General.CopyTo(filePath.getPath(), username);
-        path = general.CompressImageForDp(General.CopyTo(filePath.getPath(), username));
-        String filename = path.substring(path.lastIndexOf("/") + 1);
-        image_path = AppConfig.WEB_URL + "displayimages/" + filename;
-        Log.e("register", "path = " + path + " filename = " + filename);
+
         access_code = "AP" + username.substring(0, 1) + email.substring(0, 1) + new Random().nextInt(9000);
         String tag = bootstrapButton.getTag().toString();
         if (tag.contentEquals("login")) {

@@ -1,6 +1,7 @@
 package com.ap.agroplus.Activity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -75,6 +76,7 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.mancj.slideup.SlideUp;
+import com.wajahatkarim3.longimagecamera.LongImageCameraActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import org.json.JSONArray;
@@ -91,12 +93,16 @@ import java.util.Random;
 import java.util.Set;
 
 import id.zelory.compressor.Compressor;
+import io.github.memfis19.annca.Annca;
+import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class Home2Activity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProductsListener, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, ClickCallback {
 
+    public final static boolean isUploaded = false;
     private final static int CAMERA_RQ = 6969;
+    private final static int LONG_IMAGE_RESULT_CODE = 1234;
     private static final String LOG_TAG = "HomeActivity";
     private static final int GOOGLE_API_CLIENT_ID = 0;
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
@@ -235,7 +241,7 @@ public class Home2Activity extends AppCompatActivity
             thumbnail.setImageDrawable(BitmapDrawable.createFromPath(user.local_path));
         } else {
             String url = user.image_path;
-            Glide.with(Home2Activity.this).load(url.replace(" ", "%20")).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL).into(thumbnail);
+            Glide.with(Home2Activity.this).load(url.replace(" ", "%20")).fitCenter().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE).into(thumbnail);
         }
 
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -295,6 +301,12 @@ public class Home2Activity extends AppCompatActivity
 
     }
 
+    public void SyncingProductsOutside() {
+        if (isUploaded) {
+            SyncingProducts2();
+        }
+    }
+
     private void setUpAutoCompleteTextView() {
         recylerView = (RecyclerView) findViewById(R.id.recycler_view);
         loading = (AVLoadingIndicatorView) findViewById(R.id.loading);
@@ -342,7 +354,7 @@ public class Home2Activity extends AppCompatActivity
                     Log.e("home search", "product added = " + username);
                 }
                 current = customData;
-                adapter.LoadRecyclerView(current);
+                adapter.LoadRecyclerView(customData);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -384,13 +396,13 @@ public class Home2Activity extends AppCompatActivity
 
 
     private void startCamera() {
-        File saveFolder = new File(Environment.getExternalStorageDirectory(), "Agroplus");
-        saveFolder.mkdir();
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.withAppendedPath(Uri.parse(saveFolder.getAbsolutePath()), img_name));
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(intent, CAMERA_RQ);
-        }
+//        File saveFolder = new File(Environment.getExternalStorageDirectory(), "Agroplus");
+//        saveFolder.mkdir();
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        //intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.withAppendedPath(Uri.parse(saveFolder.getAbsolutePath()), img_name));
+//        if (intent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(intent, CAMERA_RQ);
+//        }
 
 
 //        if (Environment.getExternalStorageDirectory().canWrite()) {
@@ -412,6 +424,20 @@ public class Home2Activity extends AppCompatActivity
 //                    .saveDir(saveFolder)
 //                    .start(CAMERA_RQ);
 //        }
+        // Launches camera in Vertical Merge Mode (Captured image will be long)
+        //LongImageCameraActivity.launch(Home2Activity.this);
+        AnncaConfiguration.Builder builder = new AnncaConfiguration.Builder(Home2Activity.this, LONG_IMAGE_RESULT_CODE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        new Annca(builder.build()).launchCamera();
 
     }
 
@@ -539,30 +565,42 @@ public class Home2Activity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CAMERA_RQ && resultCode == RESULT_OK && data != null) {
+        if (resultCode == RESULT_OK && requestCode == LONG_IMAGE_RESULT_CODE && data != null) {
             slideUp.show();
             //Toast.makeText(this, "Saved to: " + data.getDataString(), Toast.LENGTH_LONG).show();
+            //Log.e("camera result", data.getDataString());
             try {
-                filePath = data.getData();
+                String imageFileName = data.getStringExtra(AnncaConfiguration.Arguments.FILE_PATH);
+                Log.e("onActivityResult", "onActivityResult: " + imageFileName);
+                //filePath = data.getData();
                 //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                bitmap = BitmapFactory.decodeFile(filePath.getPath());
+//                if (filePath == null) {
+//                    slideUp.hide();
+//                    Toast.makeText(this, "Unable to get image", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+                //Toast.makeText(this, getPath(filePath), Toast.LENGTH_SHORT).show();
+                //bitmap = BitmapFactory.decodeFile(getPath(filePath));
+                //bitmap = BitmapFactory.decodeFile(imageFileName);
+
+                //productImage.setImageBitmap(bitmap);
+                productImage.setImageDrawable(BitmapDrawable.createFromPath(imageFileName));
+                //String path = getPath(filePath);
+                String path = General.CopyToAgro(imageFileName, user.username);
+                String filename = path.substring(path.lastIndexOf("/") + 1);
+                jsonArray = new JSONArray();
+                jsonArray1 = new JSONArray();
+                String webLink = AppConfig.WEB_URL + "product_images/" + filename;
+                try {
+                    jsonArray.put(0, webLink);
+                    jsonArray1.put(0, path);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.e("filename", "camera = " + filename);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            productImage.setImageBitmap(bitmap);
-            //String path = getPath(filePath);
-            String path = General.CopyToAgro(filePath.getPath(), user.username);
-            String filename = path.substring(path.lastIndexOf("/") + 1);
-            jsonArray = new JSONArray();
-            jsonArray1 = new JSONArray();
-            String webLink = AppConfig.WEB_URL + "product_images/" + filename;
-            try {
-                jsonArray.put(0, webLink);
-                jsonArray1.put(0, path);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            Log.e("filename", "camera = " + filename);
         }
         if (requestCode == Constants.REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             slideUp.show();
@@ -746,6 +784,16 @@ public class Home2Activity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (!data.getLoggedIn()) {
+            Toast.makeText(Home2Activity.this, "Please login", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Home2Activity.this, LoginActivity.class));
+            finish();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         User myUser = data.getUser();
@@ -834,6 +882,9 @@ public class Home2Activity extends AppCompatActivity
             try {
                 //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 bitmap = BitmapFactory.decodeFile(imageUri.getPath());
+                if (bitmap == null) {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -866,16 +917,17 @@ public class Home2Activity extends AppCompatActivity
             Log.e("handleMultipleImages", "after imageUri != null");
             slideUp.show();
             try {
-                //bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUris.get(0));
                 bitmap = BitmapFactory.decodeFile(imageUris.get(0).getPath());
+                if (bitmap == null) {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUris.get(0));
+                }
                 productImage.setImageBitmap(bitmap);
+                jsonArray = new JSONArray();
+                jsonArray1 = new JSONArray();
                 for (int i = 0; i < imageUris.size(); i++) {
-
                     //String path = imageUris.get(i).getPath();
                     String path = General.CopyToAgro(imageUris.get(i).getPath(), user.username);
                     String filename = path.substring(path.lastIndexOf("/") + 1);
-                    jsonArray = new JSONArray();
-                    jsonArray1 = new JSONArray();
                     String webLink = AppConfig.WEB_URL + "product_images/" + filename;
                     try {
                         jsonArray.put(i, webLink);

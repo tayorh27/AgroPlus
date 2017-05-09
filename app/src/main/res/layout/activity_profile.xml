@@ -107,6 +107,7 @@
                             android:layout_height="wrap_content"
                             android:paddingBottom="5dp"
                             android:paddingTop="15dp"
+                            android:singleLine="true"
                             android:text="Email"
                             android:textColor="#000"
                             android:textSize="18sp" />
